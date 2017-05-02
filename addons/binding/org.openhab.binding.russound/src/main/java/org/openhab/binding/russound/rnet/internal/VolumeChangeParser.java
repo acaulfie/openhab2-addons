@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VolumeChangeParser implements BusParser {
-    private static final Logger logger = LoggerFactory.getLogger(VolumeChangeParser.class);
+    private final Logger logger = LoggerFactory.getLogger(VolumeChangeParser.class);
 
     // controller is 1, zone is 2 (subtract 1)
     public VolumeChangeParser() {

@@ -16,7 +16,7 @@ public class RNetSystemDeviceDiscoveryService extends AbstractDiscoveryService {
         if (sysHandler == null) {
             throw new IllegalArgumentException("sysHandler can't be null");
         }
-        this.sysHandler = sysHandler;
+        this.sysHandler = handler;
     }
 
     @Override

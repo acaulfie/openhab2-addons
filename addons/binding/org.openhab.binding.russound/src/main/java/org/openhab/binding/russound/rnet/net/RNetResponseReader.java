@@ -120,14 +120,14 @@ public class RNetResponseReader implements ResponseReader {
                             lastStart = i + 1;
                         }
                     }
-                    logger.trace("last start: " + lastStart);
+                    logger.trace("last start: {}", lastStart);
                     partialBytes = Arrays.copyOfRange(trimmedData, lastStart, trimmedData.length);
-                    logger.trace("partial bytes: " + StringHexUtils.byteArrayToHex(partialBytes));
+                    logger.trace("partial bytes: {}", StringHexUtils.byteArrayToHex(partialBytes));
                     for (byte[] someBytes : byteArrays) {
                         int bytesLen = someBytes.length;
-                        logger.trace("elements in byte array: " + bytesLen);
+                        logger.trace("elements in byte array: {}", bytesLen);
                         if (someBytes[bytesLen - 1] == (byte) 0xf7) { // end-flag
-                            logger.debug("Russound message: " + StringHexUtils.byteArrayToHex(someBytes));
+                            logger.debug("Russound message: {}", StringHexUtils.byteArrayToHex(someBytes));
                             responses.put(ArrayUtils.toObject(someBytes));
                         }
                     }
