@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2010-2017 by the respective copyright holders.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.openhab.binding.russound.rnet.internal;
 
 import java.util.Arrays;
@@ -33,7 +41,8 @@ public class RNetProtocolCommands {
             (byte) 0x00, (byte) 0x70, (byte) 0x01, (byte) 0x04, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x07,
             (byte) 0x00, (byte) 0x00 };
 
-    private static RNetProtocolCommands[] zoneCommands = { new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
+    private static RNetProtocolCommands[] zoneCommands = {
+            new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
             new RNetProtocolCommands(powerBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
             new RNetProtocolCommands(sourceBytes, new int[] { 1, 4 }, 5, 17),
             new RNetProtocolCommands(bassBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
