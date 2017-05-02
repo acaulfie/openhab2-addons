@@ -23,6 +23,9 @@ import org.openhab.binding.russound.internal.rio.controller.RioControllerHandler
 import org.openhab.binding.russound.internal.rio.source.RioSourceHandler;
 import org.openhab.binding.russound.internal.rio.system.RioSystemHandler;
 import org.openhab.binding.russound.internal.rio.zone.RioZoneHandler;
+import org.openhab.binding.russound.rnet.handler.RNetSystemHandler;
+import org.openhab.binding.russound.rnet.handler.RNetZoneHandler;
+import org.openhab.binding.russound.rnet.internal.RNetConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,9 @@ public class RussoundHandlerFactory extends BaseThingHandlerFactory {
     private final Logger logger = LoggerFactory.getLogger(RussoundHandlerFactory.class);
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(RioConstants.BRIDGE_TYPE_RIO,
-            RioConstants.BRIDGE_TYPE_CONTROLLER, RioConstants.THING_TYPE_SOURCE, RioConstants.THING_TYPE_ZONE);
+            RioConstants.BRIDGE_TYPE_CONTROLLER, RioConstants.THING_TYPE_SOURCE, RioConstants.THING_TYPE_ZONE,
+            RNetConstants.BRIDGE_TYPE_RNET, RNetConstants.BRIDGE_TYPE__RNET_CONTROLLER,
+            RNetConstants.THING_TYPE_RNET_ZONE);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -60,8 +65,13 @@ public class RussoundHandlerFactory extends BaseThingHandlerFactory {
             return new RioSourceHandler(thing);
         } else if (thingTypeUID.equals(RioConstants.THING_TYPE_ZONE)) {
             return new RioZoneHandler(thing);
+        } else if (thingTypeUID.equals(RNetConstants.BRIDGE_TYPE_RNET)) {
+            final RNetSystemHandler sysHandler = new RNetSystemHandler((Bridge) thing);
+            // registerThingDiscovery(sysHandler);
+            return sysHandler;
+        } else if (thingTypeUID.equals(RNetConstants.THING_TYPE_RNET_ZONE)) {
+            return new RNetZoneHandler(thing);
         }
-
         return null;
     }
 

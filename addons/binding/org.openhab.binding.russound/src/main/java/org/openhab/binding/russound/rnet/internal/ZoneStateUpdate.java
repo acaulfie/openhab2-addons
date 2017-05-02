@@ -1,0 +1,37 @@
+package org.openhab.binding.russound.rnet.internal;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.eclipse.smarthome.core.types.State;
+
+/**
+ * Represents a collection of attribute changes for a zone.
+ *
+ * @author craigh
+ *
+ */
+public class ZoneStateUpdate {
+    private ZoneId zoneId;
+
+    private Collection<ChannelStateUpdate> stateUpdates;
+
+    public ZoneId getZoneId() {
+        return zoneId;
+    }
+
+    public ZoneStateUpdate(ZoneId zoneId, String channel, State state) {
+        this.zoneId = zoneId;
+        this.stateUpdates = Arrays.asList(new ChannelStateUpdate(channel, state));
+    }
+
+    public ZoneStateUpdate(ZoneId zoneId, Collection<ChannelStateUpdate> stateUpdates) {
+        this.zoneId = zoneId;
+        this.stateUpdates = stateUpdates;
+    }
+
+    public Collection<ChannelStateUpdate> getStateUpdates() {
+        return stateUpdates;
+    }
+
+}
