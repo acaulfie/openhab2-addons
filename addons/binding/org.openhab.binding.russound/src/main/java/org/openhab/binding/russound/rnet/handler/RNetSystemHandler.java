@@ -35,6 +35,7 @@ import org.openhab.binding.russound.internal.rio.system.RioSystemConfig;
 import org.openhab.binding.russound.internal.rio.system.RioSystemHandler;
 import org.openhab.binding.russound.rnet.internal.BusParser;
 import org.openhab.binding.russound.rnet.internal.PowerChangeParser;
+import org.openhab.binding.russound.rnet.internal.RNetSystemConfig;
 import org.openhab.binding.russound.rnet.internal.SourceChangeParser;
 import org.openhab.binding.russound.rnet.internal.VolumeChangeParser;
 import org.openhab.binding.russound.rnet.internal.ZoneId;
@@ -60,7 +61,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      * The configuration for the system - will be recreated when the configuration changes and will be null when not
      * online
      */
-    private RioSystemConfig config;
+    private RNetSystemConfig config;
     private Map<ZoneId, Thing> zones = new HashMap<ZoneId, Thing>();
     /**
      * These bus parser are responsible for examining a message and letting us know if they denote a BusAction
@@ -147,21 +148,26 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      */
     @Override
     public void initialize() {
-        final RioSystemConfig rioConfig = getRioConfig();
+        final RNetSystemConfig rnetConfig = getRNetConfig();
 
-        if (rioConfig == null) {
+        if (rnetConfig == null) {
             return;
         }
 
-        if (rioConfig.getIpAddress() == null || rioConfig.getIpAddress().trim().length() == 0) {
+        if (rnetConfig.getIpAddress() == null || rnetConfig.getIpAddress().trim().length() == 0) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
                     "IP Address of Russound is missing from configuration");
+            return;
+        }
+        if (rnetConfig.getPort() < 1) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                    "Invalid port for Rnet connection, must be > 0");
             return;
         }
 
         sessionLock.lock();
         try {
-            session = new RNetSession<Byte[]>(rioConfig.getIpAddress(), 7777, new RNetResponseReader());
+            session = new RNetSession<Byte[]>(rnetConfig.getIpAddress(), rnetConfig.getPort(), new RNetResponseReader());
             session.addListener(new SessionListener<Byte[]>() {
 
                 @Override
@@ -232,7 +238,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         retryConnectionLock.lock();
         try {
             if (retryConnection == null) {
-                final RioSystemConfig rioConfig = getRioConfig();
+                final RNetSystemConfig rioConfig = getRNetConfig();
                 if (rioConfig != null) {
 
                     logger.info("Will try to reconnect in {} seconds", rioConfig.getRetryPolling());
@@ -292,10 +298,10 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      *
      * @return a possible null {@link RioSystemConfig}
      */
-    public RioSystemConfig getRioConfig() {
+    public RNetSystemConfig getRNetConfig() {
         configLock.lock();
         try {
-            final RioSystemConfig sysConfig = getThing().getConfiguration().as(RioSystemConfig.class);
+            final RNetSystemConfig sysConfig = getThing().getConfiguration().as(RNetSystemConfig.class);
 
             if (sysConfig == null) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Configuration file missing");
