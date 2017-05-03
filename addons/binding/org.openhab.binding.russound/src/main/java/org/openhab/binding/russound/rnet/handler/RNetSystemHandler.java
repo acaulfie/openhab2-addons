@@ -9,6 +9,7 @@
 package org.openhab.binding.russound.rnet.handler;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -353,8 +354,8 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         if (!childThing.getConfiguration().getProperties().containsKey("zone")) {
             throw new IllegalArgumentException("childThing does not have required 'zone' property");
         }
-        int zone = (int) childThing.getConfiguration().getProperties().get("zone");
-        int controller = (int) childThing.getConfiguration().getProperties().get("controller");
+        int zone = ((BigDecimal) childThing.getConfiguration().getProperties().get("zone")).intValue();
+        int controller = ((BigDecimal) childThing.getConfiguration().getProperties().get("controller")).intValue();
         return new ZoneId(controller, zone);
 
     }
