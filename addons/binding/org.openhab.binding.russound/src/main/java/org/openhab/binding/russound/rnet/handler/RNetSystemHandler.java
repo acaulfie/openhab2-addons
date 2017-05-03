@@ -167,7 +167,8 @@ public class RNetSystemHandler extends BaseBridgeHandler {
 
         sessionLock.lock();
         try {
-            session = new RNetSession<Byte[]>(rnetConfig.getIpAddress(), rnetConfig.getPort(), new RNetResponseReader());
+            session = new RNetSession<Byte[]>(rnetConfig.getIpAddress(), rnetConfig.getPort(),
+                    new RNetResponseReader());
             session.addListener(new SessionListener<Byte[]>() {
 
                 @Override
@@ -352,8 +353,8 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         if (!childThing.getConfiguration().getProperties().containsKey("zone")) {
             throw new IllegalArgumentException("childThing does not have required 'zone' property");
         }
-        int zone = Integer.parseInt(childThing.getConfiguration().getProperties().get("zone").toString());
-        int controller = Integer.parseInt(childThing.getConfiguration().getProperties().get("controller").toString());
+        int zone = (int) childThing.getConfiguration().getProperties().get("zone");
+        int controller = (int) childThing.getConfiguration().getProperties().get("controller");
         return new ZoneId(controller, zone);
 
     }

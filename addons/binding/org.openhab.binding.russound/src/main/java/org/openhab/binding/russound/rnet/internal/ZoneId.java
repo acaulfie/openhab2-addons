@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.russound.rnet.internal;
 
-import com.google.common.base.Objects;
-
 public class ZoneId {
 
     private int controllerId;
@@ -37,12 +35,16 @@ public class ZoneId {
             return false;
         }
         final ZoneId other = (ZoneId) obj;
-        return Objects.equal(this.controllerId, other.controllerId) && Objects.equal(this.zoneId, other.zoneId);
+        return this.controllerId == other.controllerId && this.zoneId == other.zoneId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.controllerId, this.zoneId);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + this.controllerId;
+        result = prime * result + this.zoneId;
+        return result;
     }
 
     @Override
