@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
     <bridge-type id="rnet">
         <label>Russound RNet Device</label>
-        <description>Ethernet access point to Russound RIO control system (usually the main controller)</description>
+        <description>Access point to Russound RNet control system (usually the main controller)</description>
 
         <config-description>
             <parameter name="ipAddress" type="text" required="true">
@@ -16,6 +16,16 @@
                 <label>Port Number</label>
                 <description>The port for the ser2net (ser2sock) endpoint.</description>
                 <default>7777</default>
+            </parameter>
+            <parameter name="numControllers" type="integer" required="false">
+                <label># of Controllers</label>
+                <description>The number of Russound controllers.</description>
+                <default>1</default>
+            </parameter>
+            <parameter name="zonesPer" type="integer" required="false">
+                <label>Zones per Controller</label>
+                <description>The number of Zones for each controller.</description>
+                <default>1</default>
             </parameter>
             <parameter name="ping" type="integer" required="false">
                 <label>Ping Interval</label>

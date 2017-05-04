@@ -23,6 +23,7 @@ import org.openhab.binding.russound.internal.rio.controller.RioControllerHandler
 import org.openhab.binding.russound.internal.rio.source.RioSourceHandler;
 import org.openhab.binding.russound.internal.rio.system.RioSystemHandler;
 import org.openhab.binding.russound.internal.rio.zone.RioZoneHandler;
+import org.openhab.binding.russound.rnet.discovery.RNetSystemDeviceDiscoveryService;
 import org.openhab.binding.russound.rnet.handler.RNetSystemHandler;
 import org.openhab.binding.russound.rnet.handler.RNetZoneHandler;
 import org.openhab.binding.russound.rnet.internal.RNetConstants;
@@ -41,13 +42,12 @@ public class RussoundHandlerFactory extends BaseThingHandlerFactory {
     private final Logger logger = LoggerFactory.getLogger(RussoundHandlerFactory.class);
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = ImmutableSet.of(RioConstants.BRIDGE_TYPE_RIO,
-            RioConstants.BRIDGE_TYPE_CONTROLLER, RioConstants.THING_TYPE_SOURCE, RioConstants.THING_TYPE_ZONE,
-            RNetConstants.BRIDGE_TYPE_RNET, RNetConstants.BRIDGE_TYPE__RNET_CONTROLLER,
-            RNetConstants.THING_TYPE_RNET_ZONE);
+            RioConstants.BRIDGE_TYPE_CONTROLLER, RioConstants.THING_TYPE_SOURCE, RioConstants.THING_TYPE_ZONE);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
-        return SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID);
+        return SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID)
+                || RNetConstants.SUPPORTED_DEVICE_THING_TYPES_UIDS.contains(thingTypeUID);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RussoundHandlerFactory extends BaseThingHandlerFactory {
             return new RioZoneHandler(thing);
         } else if (thingTypeUID.equals(RNetConstants.BRIDGE_TYPE_RNET)) {
             final RNetSystemHandler sysHandler = new RNetSystemHandler((Bridge) thing);
-            // registerThingDiscovery(sysHandler);
+            registerThingDiscovery(sysHandler);
             return sysHandler;
         } else if (thingTypeUID.equals(RNetConstants.THING_TYPE_RNET_ZONE)) {
             return new RNetZoneHandler(thing);
@@ -89,6 +89,22 @@ public class RussoundHandlerFactory extends BaseThingHandlerFactory {
 
         bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, prop);
         discoveryService.activate();
+    }
+
+    /**
+     * Registers a {@link RioSystemDeviceDiscoveryService} from the passed {@link RioSystemHandler} and activates it.
+     *
+     * @param bridgeHandler the {@link RioSystemHandler} for discovery services
+     */
+    private synchronized void registerThingDiscovery(RNetSystemHandler bridgeHandler) {
+        RNetSystemDeviceDiscoveryService discoveryService = new RNetSystemDeviceDiscoveryService(bridgeHandler);
+        logger.trace("Try to register Discovery service on BundleID: {} Service: {}",
+                bundleContext.getBundle().getBundleId(), DiscoveryService.class.getName());
+
+        final Hashtable<String, String> prop = new Hashtable<String, String>();
+
+        bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, prop);
+        // discoveryService.activate();
     }
 
 }

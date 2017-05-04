@@ -326,6 +326,12 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         discoveryService.set(service);
     }
 
+    @Override
+    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
+        // TODO Auto-generated method stub
+        super.handleConfigurationUpdate(configurationParameters);
+    }
+
     /**
      * Helper method to possibly start a scan. A scan will ONLY be started if the {@link RioSystemConfig#isScanDevice()}
      * is true and a discovery service has been set ({@link #registerDiscoveryService(RioSystemDeviceDiscoveryService)})

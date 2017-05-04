@@ -9,8 +9,12 @@
 package org.openhab.binding.russound.rnet.discovery;
 
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
-import org.openhab.binding.russound.internal.RussoundHandlerFactory;
+import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
+import org.eclipse.smarthome.core.thing.ThingTypeUID;
+import org.eclipse.smarthome.core.thing.ThingUID;
 import org.openhab.binding.russound.rnet.handler.RNetSystemHandler;
+import org.openhab.binding.russound.rnet.internal.RNetConstants;
+import org.openhab.binding.russound.rnet.internal.RNetSystemConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +24,8 @@ public class RNetSystemDeviceDiscoveryService extends AbstractDiscoveryService {
     private RNetSystemHandler sysHandler;
 
     public RNetSystemDeviceDiscoveryService(RNetSystemHandler handler) {
-        super(RussoundHandlerFactory.SUPPORTED_THING_TYPES_UIDS, 30, false);
-        if (sysHandler == null) {
+        super(RNetConstants.SUPPORTED_DEVICE_THING_TYPES_UIDS, 30, false);
+        if (handler == null) {
             throw new IllegalArgumentException("sysHandler can't be null");
         }
         this.sysHandler = handler;
@@ -29,12 +33,22 @@ public class RNetSystemDeviceDiscoveryService extends AbstractDiscoveryService {
 
     @Override
     protected void startScan() {
+        final RNetSystemConfig sysConfig = this.sysHandler.getThing().getConfiguration().as(RNetSystemConfig.class);
+
         logger.debug("Should start scan for RNet");
         // for now, lets assume can have up to 6 controllers, and up to 6 zones in each
-        for (int controllerNumber = 0; controllerNumber < 6; controllerNumber++) {
-            for (int zoneNumber = 0; controllerNumber < 6; controllerNumber++) {
+        for (int controllerNumber = 1; controllerNumber <= sysConfig.getNumControllers(); controllerNumber++) {
+            for (int zoneNumber = 1; zoneNumber <= sysConfig.getZonesPer(); zoneNumber++) {
                 // let's request zone info for each combination. If we receive a valid return message, let's add the
                 // device(s)
+                logger.debug("create a zone with controller id: {}, zone id: {}", controllerNumber, zoneNumber);
+                ThingTypeUID thingTypeUID = RNetConstants.THING_TYPE_RNET_ZONE;
+                String id = String.format("%d_%d", controllerNumber, zoneNumber);
+                String name = String.format("RNet Audio Zone (%s)", id);
+                thingDiscovered(DiscoveryResultBuilder.create(new ThingUID(thingTypeUID, id))
+                        .withBridge(sysHandler.getThing().getUID()).withLabel(name)
+                        .withProperty("controller", controllerNumber).withProperty("zone", zoneNumber).build());
+
             }
         }
 
