@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class TcpConnectionProvider implements ConnectionProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(TcpConnectionProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(TcpConnectionProvider.class);
 
     /** Connection timeout in milliseconds **/
     private static final int CONNECTION_TIMEOUT = 5000;
