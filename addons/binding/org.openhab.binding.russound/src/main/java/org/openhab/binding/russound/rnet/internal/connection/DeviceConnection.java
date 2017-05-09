@@ -69,7 +69,7 @@ public class DeviceConnection {
             dataListener.start();
         }
 
-        logger.debug("connect() returning: " + returnValue);
+        logger.debug("connect() returning: {}", returnValue);
         return returnValue;
     }
 
@@ -126,11 +126,11 @@ public class DeviceConnection {
      **/
     private void sendCommand(byte[] command, boolean closeSocket, int retry) {
 
-        logger.debug("send command called with bytes: " + StringHexUtils.byteArrayToHex(command),
-                "close socket: " + closeSocket);
+        logger.debug("send command called with bytes: {} ,close socket: ", StringHexUtils.byteArrayToHex(command),
+                closeSocket);
 
         boolean connected = connect();
-        logger.trace("Is connected: " + connected);
+        logger.trace("Is connected: {}", connected);
         if (connected) {
             try {
 
@@ -192,7 +192,7 @@ public class DeviceConnection {
                         }
                         continue;
                     }
-                    logger.trace("Avail: " + avail);
+                    logger.trace("Avail: {}", avail);
                     try {
                         int readCount = mConnectionProvider.getInputStream().read(data, total, avail);
                         total += readCount;

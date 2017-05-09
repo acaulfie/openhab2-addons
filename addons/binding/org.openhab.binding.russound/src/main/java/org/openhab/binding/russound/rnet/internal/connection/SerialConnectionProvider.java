@@ -34,7 +34,7 @@ import gnu.io.UnsupportedCommOperationException;
  * @since 1.7.0
  */
 public class SerialConnectionProvider implements ConnectionProvider {
-    private static final Logger logger = LoggerFactory.getLogger(SerialConnectionProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(SerialConnectionProvider.class);
     private SerialPort m_port = null;
     private final String m_appName = "Russound";
     private final int m_speed = 19200; // baud rate
