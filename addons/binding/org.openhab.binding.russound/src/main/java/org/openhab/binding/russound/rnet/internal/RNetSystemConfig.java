@@ -2,8 +2,7 @@ package org.openhab.binding.russound.rnet.internal;
 
 public class RNetSystemConfig {
 
-    private String ipAddress;
-    private int port;
+    private String connectionString;
     private int retryPolling;
 
     private int numControllers;
@@ -33,20 +32,12 @@ public class RNetSystemConfig {
         this.retryPolling = retryPolling;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getConnectionString() {
+        return connectionString;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
+    public void setConnectionString(String ipAddress) {
+        this.connectionString = ipAddress;
     }
 
 }

@@ -32,7 +32,7 @@ public class TcpConnectionProvider implements ConnectionProvider {
     /** Instantiated class Port for the receiver to communicate with. **/
     private int receiverPort = DEFAULT_EISCP_PORT;
 
-    private Socket eiscpSocket = null;
+    private Socket socket = null;
     private ObjectOutputStream outStream = null;
     private DataInputStream inStream = null;
     private boolean connected = false;
@@ -68,19 +68,19 @@ public class TcpConnectionProvider implements ConnectionProvider {
     @Override
     public boolean connect() {
 
-        if (eiscpSocket == null || !connected || !eiscpSocket.isConnected()) {
+        if (socket == null || !connected || !socket.isConnected()) {
             try {
                 // Creating a socket to connect to the server
-                eiscpSocket = new Socket();
-                eiscpSocket.connect(new InetSocketAddress(receiverIP, receiverPort), CONNECTION_TIMEOUT);
+                socket = new Socket();
+                socket.connect(new InetSocketAddress(receiverIP, receiverPort), CONNECTION_TIMEOUT);
 
                 logger.debug("Connected to {} on port {}", receiverIP, receiverPort);
 
                 // Get Input and Output streams
-                outStream = new ObjectOutputStream(eiscpSocket.getOutputStream());
-                inStream = new DataInputStream(eiscpSocket.getInputStream());
+                outStream = new ObjectOutputStream(socket.getOutputStream());
+                inStream = new DataInputStream(socket.getInputStream());
 
-                eiscpSocket.setSoTimeout(SOCKET_TIMEOUT);
+                socket.setSoTimeout(SOCKET_TIMEOUT);
                 outStream.flush();
                 connected = true;
 
@@ -106,9 +106,9 @@ public class TcpConnectionProvider implements ConnectionProvider {
             outStream = null;
             logger.debug("closed output stream!");
         }
-        if (eiscpSocket != null) {
-            eiscpSocket.close();
-            eiscpSocket = null;
+        if (socket != null) {
+            socket.close();
+            socket = null;
             logger.debug("closed socket!");
         }
 
