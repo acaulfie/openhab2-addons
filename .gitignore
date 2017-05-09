@@ -7,7 +7,7 @@ bundles/io/org.openhab.io.multimedia.tts.marytts/lib/
 .metadata/
 */plugin.xml_gen
 targetplatform/*.launch
-
+**/.DS_Store
 distribution/openhabhome/logs/*.log
 distribution/openhabhome/*.zip
 distribution/openhabhome/etc/rrd4j/*.rrd
