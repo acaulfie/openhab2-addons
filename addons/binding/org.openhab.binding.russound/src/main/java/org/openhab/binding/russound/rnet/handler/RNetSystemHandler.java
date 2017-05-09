@@ -8,7 +8,6 @@
  */
 package org.openhab.binding.russound.rnet.handler;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -46,9 +45,12 @@ import org.openhab.binding.russound.rnet.internal.VolumeChangeParser;
 import org.openhab.binding.russound.rnet.internal.ZoneId;
 import org.openhab.binding.russound.rnet.internal.ZoneInfoParser;
 import org.openhab.binding.russound.rnet.internal.ZoneStateUpdate;
-import org.openhab.binding.russound.rnet.net.RNetResponseReader;
-import org.openhab.binding.russound.rnet.net.RNetSession;
-import org.openhab.binding.russound.rnet.net.SessionListener;
+import org.openhab.binding.russound.rnet.internal.connection.ConnectionProvider;
+import org.openhab.binding.russound.rnet.internal.connection.DeviceConnection;
+import org.openhab.binding.russound.rnet.internal.connection.InputHander;
+import org.openhab.binding.russound.rnet.internal.connection.RNetInputStreamParser;
+import org.openhab.binding.russound.rnet.internal.connection.SerialConnectionProvider;
+import org.openhab.binding.russound.rnet.internal.connection.TcpConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +82,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     /**
      * The {@link SocketSession} telnet session to the switch. Will be null if not connected.
      */
-    private RNetSession<Byte[]> session;
+    private DeviceConnection session;
 
     /**
      * The lock used to control access to {@link #session}
@@ -174,43 +176,43 @@ public class RNetSystemHandler extends BaseBridgeHandler {
             return;
         }
 
-        if (rnetConfig.getIpAddress() == null || rnetConfig.getIpAddress().trim().length() == 0) {
+        if (rnetConfig.getConnectionString() == null || rnetConfig.getConnectionString().trim().length() == 0) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                    "IP Address of Russound is missing from configuration");
-            return;
-        }
-        if (rnetConfig.getPort() < 1) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-                    "Invalid port for Rnet connection, must be > 0");
+                    "Connection string to Russound is missing from configuration");
             return;
         }
 
         sessionLock.lock();
-        try {
-            session = new RNetSession<Byte[]>(rnetConfig.getIpAddress(), rnetConfig.getPort(),
-                    new RNetResponseReader());
-            session.addListener(new SessionListener<Byte[]>() {
+        RNetInputStreamParser streamParser = new RNetInputStreamParser(new InputHander() {
 
-                @Override
-                public void responseReceived(Byte[] response) throws InterruptedException {
-                    for (BusParser parser : busParsers) {
-                        if (parser.matches(response)) {
-                            ZoneStateUpdate updates = parser.process(response);
-                            Thing zone = zones.get(updates.getZoneId());
-                            if (zone != null) {
-                                ((RNetZoneHandler) zone.getHandler()).processUpdates(updates.getStateUpdates());
-                            }
-
+            @Override
+            public void handle(Byte[] bytes) {
+                for (BusParser parser : busParsers) {
+                    if (parser.matches(bytes)) {
+                        ZoneStateUpdate updates = parser.process(bytes);
+                        Thing zone = zones.get(updates.getZoneId());
+                        if (zone != null) {
+                            ((RNetZoneHandler) zone.getHandler()).processUpdates(updates.getStateUpdates());
                         }
                     }
                 }
 
-                @Override
-                public void responseException(IOException e) throws InterruptedException {
-                    logger.error("Received exception from session: {}", e);
+            }
+        });
+        // lets pick between tcp or serial. by convention if connection address starts with /tcp/ then we will be using
+        // tcp
+        ConnectionProvider connectionProvider;
+        if (rnetConfig.getConnectionString().startsWith("/tcp/")) {
+            String address = rnetConfig.getConnectionString().substring(5);
+            String[] addressParts = address.split(":");
+            connectionProvider = new TcpConnectionProvider(addressParts[0], Integer.parseInt(addressParts[1]));
 
-                }
-            });
+        } else {
+            connectionProvider = new SerialConnectionProvider(rnetConfig.getConnectionString());
+        }
+
+        try {
+            session = new DeviceConnection(connectionProvider, streamParser);
         } finally {
             sessionLock.unlock();
         }
@@ -306,8 +308,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         sessionLock.lock();
         try {
             session.disconnect();
-        } catch (IOException e) {
-            // ignore - we don't care
         } finally {
             sessionLock.unlock();
         }
@@ -412,11 +412,8 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     }
 
     public void sendCommand(Byte[] command) {
-        try {
-            session.sendCommand(ArrayUtils.toPrimitive(addChecksumandTerminator(command)));
-        } catch (IOException e) {
-            logger.error("Error sending command to russounds", e);
-        }
+        session.sendCommand(ArrayUtils.toPrimitive(addChecksumandTerminator(command)));
+
     }
 
     private Byte[] addChecksumandTerminator(Byte[] command) {

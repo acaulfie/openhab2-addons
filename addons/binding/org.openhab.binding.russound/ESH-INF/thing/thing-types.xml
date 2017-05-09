@@ -11,15 +11,10 @@
             <channel id="alloff" typeId="rnetSysAllOff" />
      </channels>
         <config-description>
-            <parameter name="ipAddress" type="text" required="true">
+            <parameter name="connectionString" type="text" required="true">
                 <context>network-address</context>
-                <label>IP or Host Name</label>
-                <description>The IP or host name of the Russound RNET access point</description>
-            </parameter>
-            <parameter name="port" type="integer" required="false">
-                <label>Port Number</label>
-                <description>The port for the ser2net (ser2sock) endpoint.</description>
-                <default>7777</default>
+                <label>Connection String</label>
+                <description>either /tcp/ip:port (tcp) or /dev/ttyAM0 (serial)</description>
             </parameter>
             <parameter name="numControllers" type="integer" required="false">
                 <label># of Controllers</label>

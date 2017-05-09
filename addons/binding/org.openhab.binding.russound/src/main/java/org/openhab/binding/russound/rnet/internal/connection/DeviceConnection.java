@@ -12,8 +12,6 @@ package org.openhab.binding.russound.rnet.internal.connection;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.openhab.binding.russound.rnet.internal.StringHexUtils;
 import org.slf4j.Logger;
@@ -26,8 +24,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <br>
  *
- * A class that wraps the communication to Russound devices using the Ethernet
- * Integra Serial Control Protocol (eISCP).
+ * A class that wraps the communication to Russound devices.
  *
  * @author Tom Gutwin P.Eng
  * @author Thomas.Eichstaedt-Engelen (Refactoring)
@@ -38,47 +35,24 @@ public class DeviceConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(DeviceConnection.class);
 
-    /** Connection test interval in milliseconds **/
-    private static final int CONNECTION_TEST_INTERVAL = 600000;
-
     private DataListener dataListener = null;
     private ConnectionProvider mConnectionProvider;
     private int retryCount = 1;
-    private ConnectionSupervisor connectionSupervisor = null;
-    private CommandProvider mSupervisorCommandProvider = null;
     private ConnectionStateListener mConnectionStateListener;
-
-    private SendCommandFormatter mSendCommandFormatter = null;
 
     private InputParser mInputParser = null;
 
-    /**
-     * Constructor that takes your receivers IP and port.
-     **/
-    public DeviceConnection(ConnectionProvider connectionProvider, InputParser inputParser, CommandProvider provider) {
+    public DeviceConnection(ConnectionProvider connectionProvider, InputParser inputParser) {
 
         mConnectionProvider = connectionProvider;
         mInputParser = inputParser;
-        mSupervisorCommandProvider = provider;
-
-    }
-
-    public void setSendCommandFormatter(SendCommandFormatter formatter) {
-        mSendCommandFormatter = formatter;
-    }
-
-    /**
-     * Get retry count value.
-     **/
-    private int getRetryCount() {
-        return retryCount;
     }
 
     /**
      * Set retry count value. How many times command is retried when error
      * occurs.
      **/
-    private void setRetryCount(int retryCount) {
+    public void setRetryCount(int retryCount) {
         this.retryCount = retryCount;
     }
 
@@ -95,10 +69,6 @@ public class DeviceConnection {
             dataListener.start();
         }
 
-        // start connection tester
-        if (connectionSupervisor == null) {
-            connectionSupervisor = new ConnectionSupervisor(CONNECTION_TEST_INTERVAL);
-        }
         logger.debug("connect() returning: " + returnValue);
         return returnValue;
     }
@@ -109,7 +79,7 @@ public class DeviceConnection {
 
     /**
      * Closes the socket connection.
-     * 
+     *
      * @return true if the closed successfully
      **/
     public boolean disconnect() {
@@ -121,11 +91,7 @@ public class DeviceConnection {
                 dataListener = null;
                 logger.debug("closed data listener!");
             }
-            if (connectionSupervisor != null) {
-                connectionSupervisor.stopConnectionTester();
-                connectionSupervisor = null;
-                logger.debug("closed connection tester!");
-            }
+
             mConnectionProvider.disconnect();
             isConnected = false;
         } catch (IOException ioException) {
@@ -139,7 +105,7 @@ public class DeviceConnection {
 
     /**
      * Sends to command to the receiver. It does not wait for a reply.
-     * 
+     *
      * @param command
      *            the command to send.
      **/
@@ -150,7 +116,7 @@ public class DeviceConnection {
 
     /**
      * Sends to command to the receiver.
-     * 
+     *
      * @param byteArray
      *            the command to send.
      * @param closeSocket
@@ -162,18 +128,15 @@ public class DeviceConnection {
 
         logger.debug("send command called with bytes: " + StringHexUtils.byteArrayToHex(command),
                 "close socket: " + closeSocket);
-        byte[] byteArray = command;
-        if (mSendCommandFormatter != null) {
-            byteArray = mSendCommandFormatter.processCommand(command);
-        }
+
         boolean connected = connect();
         logger.trace("Is connected: " + connected);
         if (connected) {
             try {
 
-                logger.debug("Sending {} bytes: {}", byteArray.length, StringHexUtils.byteArrayToHex(byteArray));
+                logger.debug("Sending {} bytes: {}", command.length, StringHexUtils.byteArrayToHex(command));
 
-                mConnectionProvider.getOutputStream().write(byteArray);
+                mConnectionProvider.getOutputStream().write(command);
                 mConnectionProvider.getOutputStream().flush();
                 if (mConnectionStateListener != null) {
                     mConnectionStateListener.isConnected(true);
@@ -187,7 +150,7 @@ public class DeviceConnection {
                 if (retry > 0) {
                     logger.debug("Retry {}...", retry);
                     disconnect();
-                    sendCommand(byteArray, closeSocket, retry--);
+                    sendCommand(command, closeSocket, retry--);
                 } else {
                     disconnect();
                 }
@@ -203,7 +166,7 @@ public class DeviceConnection {
 
     /**
      * This method wait any state messages form receiver.
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      * @throws EiscpException
@@ -330,42 +293,6 @@ public class DeviceConnection {
                 sleep(milli);
             } catch (InterruptedException e) {
                 interrupted = true;
-            }
-        }
-    }
-
-    private class ConnectionSupervisor {
-        private Timer timer;
-
-        public ConnectionSupervisor(int milliseconds) {
-            logger.debug("Connection supervisor started, interval {} milliseconds", milliseconds);
-
-            timer = new Timer();
-            timer.schedule(new Task(), milliseconds, milliseconds);
-        }
-
-        public void stopConnectionTester() {
-            timer.cancel();
-        }
-
-        class Task extends TimerTask {
-            @Override
-            public void run() {
-                logger.debug("Attempting to confirm connection: " + mConnectionProvider.isConnected());
-                // if (mConnectionProvider.isConnected()) {
-                // logger.debug("Test connection to {}:{}");// ,
-                // receiverIP,receiverPort);
-                try {
-                    byte[] command = mSupervisorCommandProvider.getCommand();
-                    logger.trace("Sending command: " + command);
-
-                    sendCommand(command, false, 0);
-                    logger.trace("connection supervisor command sent");
-                } catch (Exception e) {
-                    logger.error("Error in connection supervisor", e);
-                    mConnectionStateListener.isConnected(false);
-                }
-                // }
             }
         }
     }
