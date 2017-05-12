@@ -33,6 +33,7 @@ public class ZoneInfoParser implements BusParser {
         actions.add(new ChannelStateUpdate(RNetConstants.CHANNEL_ZONEVOLUME, new PercentType(bytes[22] * 2)));
         actions.add(new ChannelStateUpdate(RNetConstants.CHANNEL_ZONESOURCE, new DecimalType(bytes[21] + 1)));
         actions.add(new ChannelStateUpdate(RNetConstants.CHANNEL_ZONEBALANCE, new DecimalType(bytes[26] - 10)));
+        actions.add(new ChannelStateUpdate(RNetConstants.CHANNEL_ZONETREBLE, new DecimalType(bytes[24] - 10)));
         actions.add(new ChannelStateUpdate(RNetConstants.CHANNEL_ZONELOUDNESS,
                 bytes[25] == 1 ? OnOffType.ON : OnOffType.OFF));
         return new ZoneStateUpdate(zoneId, actions);

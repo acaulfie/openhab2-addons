@@ -104,9 +104,10 @@ public class RNetZoneHandler extends BaseThingHandler {
                 logger.debug("Received a ZONE BASS channel command with a non DecimalType: {}", command);
             }
 
-        } else if (id.equals(RioConstants.CHANNEL_ZONETREBLE)) {
+        } else if (id.equals(RNetConstants.CHANNEL_ZONETREBLE)) {
             if (command instanceof DecimalType) {
-                // getProtocolHandler().setZoneTreble(((DecimalType) command).intValue());
+                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TREBLE_SET, this.id,
+                        (byte) (((DecimalType) command).intValue() + 10)));
             } else {
                 logger.debug("Received a ZONE TREBLE channel command with a non DecimalType: {}", command);
             }
