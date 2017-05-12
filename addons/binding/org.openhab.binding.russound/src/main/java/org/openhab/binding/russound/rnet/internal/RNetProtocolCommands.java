@@ -21,7 +21,8 @@ public class RNetProtocolCommands {
         POWER_SET,
         SOURCE_SET,
         BASS_SET,
-        ZONE_INFO
+        ZONE_INFO,
+        BALANCE_SET
     }
 
     private static Byte[] volumeBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f, (byte) 0x00,
@@ -40,13 +41,18 @@ public class RNetProtocolCommands {
     private static Byte[] zoneInfoBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f, (byte) 0x00,
             (byte) 0x00, (byte) 0x70, (byte) 0x01, (byte) 0x04, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x07,
             (byte) 0x00, (byte) 0x00 };
+    private static Byte[] balanceBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f, (byte) 0x00,
+            (byte) 0x00, (byte) 0x70, (byte) 0x00, (byte) 0x05, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+            (byte) 0x03, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x00,
+            (byte) 0x00 };
 
     private static RNetProtocolCommands[] zoneCommands = {
             new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
             new RNetProtocolCommands(powerBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
             new RNetProtocolCommands(sourceBytes, new int[] { 1, 4 }, 5, 17),
             new RNetProtocolCommands(bassBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
-            new RNetProtocolCommands(zoneInfoBytes, new int[] { 1 }, new int[] { 11 }, 2) };
+            new RNetProtocolCommands(zoneInfoBytes, new int[] { 1 }, new int[] { 11 }, 2),
+            new RNetProtocolCommands(balanceBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21) };
 
     private Byte[] commandBytes;
     private int[] zoneBytes;

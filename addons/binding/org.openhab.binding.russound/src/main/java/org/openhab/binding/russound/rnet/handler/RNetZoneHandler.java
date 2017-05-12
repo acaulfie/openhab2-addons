@@ -31,9 +31,9 @@ import org.openhab.binding.russound.internal.rio.zone.RioZoneHandler;
 import org.openhab.binding.russound.rnet.internal.ChannelStateUpdate;
 import org.openhab.binding.russound.rnet.internal.RNetConstants;
 import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands;
+import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands.ZoneCommand;
 import org.openhab.binding.russound.rnet.internal.RnetZoneConfig;
 import org.openhab.binding.russound.rnet.internal.ZoneId;
-import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands.ZoneCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +113,8 @@ public class RNetZoneHandler extends BaseThingHandler {
 
         } else if (id.equals(RioConstants.CHANNEL_ZONEBALANCE)) {
             if (command instanceof DecimalType) {
+                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BALANCE_SET, this.id,
+                        (byte) (((DecimalType) command).intValue() + 10)));
                 // getProtocolHandler().setZoneBalance(((DecimalType) command).intValue());
             } else {
                 logger.debug("Received a ZONE BALANCE channel command with a non DecimalType: {}", command);
