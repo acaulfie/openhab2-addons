@@ -32,6 +32,7 @@ public class RNetConstants {
     public static final String CHANNEL_ZONEBALANCE = "balance";
     public static final String CHANNEL_ZONELOUDNESS = "loudness";
     public static final String CHANNEL_ZONETREBLE = "treble";
+    public static final String CHANNEL_ZONEBASS = "bass";
     public static final String CHANNEL_ZONEMUTE = "mute";
 
 }
