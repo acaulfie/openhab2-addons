@@ -130,9 +130,10 @@ public class RNetZoneHandler extends BaseThingHandler {
                         command);
             }
 
-        } else if (id.equals(RioConstants.CHANNEL_ZONELOUDNESS)) {
+        } else if (id.equals(RNetConstants.CHANNEL_ZONELOUDNESS)) {
             if (command instanceof OnOffType) {
-                // getProtocolHandler().setZoneLoudness(command == OnOffType.ON);
+                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.LOUDNESS_SET, this.id,
+                        command == OnOffType.ON ? (byte) 0x01 : 0));
             } else {
                 logger.debug("Received a ZONE TURN ON VOLUME channel command with a non OnOffType: {}", command);
             }
@@ -144,7 +145,7 @@ public class RNetZoneHandler extends BaseThingHandler {
                 logger.debug("Received a ZONE SLEEP TIME REMAINING channel command with a non DecimalType: {}",
                         command);
             }
-        } else if (id.equals(RioConstants.CHANNEL_ZONESOURCE)) {
+        } else if (id.equals(RNetConstants.CHANNEL_ZONESOURCE)) {
             if (command instanceof DecimalType) {
                 getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.SOURCE_SET, this.id,
                         (byte) (((DecimalType) command).intValue() - 1)));
@@ -152,7 +153,7 @@ public class RNetZoneHandler extends BaseThingHandler {
                 logger.debug("Received a ZONE SOURCE channel command with a non DecimalType: {}", command);
             }
 
-        } else if (id.equals(RioConstants.CHANNEL_ZONESTATUS)) {
+        } else if (id.equals(RNetConstants.CHANNEL_ZONESTATUS)) {
             if (command instanceof OnOffType) {
                 getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.POWER_SET, this.id,
                         command == OnOffType.ON ? (byte) 0x01 : 0));
