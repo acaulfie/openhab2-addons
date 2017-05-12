@@ -24,7 +24,8 @@ public class RNetProtocolCommands {
         ZONE_INFO,
         BALANCE_SET,
         LOUDNESS_SET,
-        TREBLE_SET
+        TREBLE_SET,
+        TURNONVOLUME_SET
     }
 
     private static Byte[] volumeBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f, (byte) 0x00,
@@ -55,6 +56,10 @@ public class RNetProtocolCommands {
             (byte) 0x00, (byte) 0x70, (byte) 0x00, (byte) 0x05, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x01, (byte) 0x00,
             (byte) 0x00 };
+    private static Byte[] turnOnVolumeBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f,
+            (byte) 0x00, (byte) 0x00, (byte) 0x70, (byte) 0x00, (byte) 0x05, (byte) 0x02, (byte) 0x00, (byte) 0x00,
+            (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x01,
+            (byte) 0x00, (byte) 0x00 };
     private static RNetProtocolCommands[] zoneCommands = {
             new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
             new RNetProtocolCommands(powerBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
@@ -63,7 +68,8 @@ public class RNetProtocolCommands {
             new RNetProtocolCommands(zoneInfoBytes, new int[] { 1 }, new int[] { 11 }, 2),
             new RNetProtocolCommands(balanceBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
             new RNetProtocolCommands(loudnessBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
-            new RNetProtocolCommands(trebleBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21) };
+            new RNetProtocolCommands(trebleBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
+            new RNetProtocolCommands(turnOnVolumeBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21) };
 
     private Byte[] commandBytes;
     private int[] zoneBytes;

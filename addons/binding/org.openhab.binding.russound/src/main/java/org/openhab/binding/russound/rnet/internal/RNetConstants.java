@@ -34,5 +34,5 @@ public class RNetConstants {
     public static final String CHANNEL_ZONETREBLE = "treble";
     public static final String CHANNEL_ZONEBASS = "bass";
     public static final String CHANNEL_ZONEMUTE = "mute";
-
+    public static final String CHANNEL_ZONETURNONVOLUME = "turnonvolume";
 }

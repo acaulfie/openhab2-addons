@@ -122,13 +122,18 @@ public class RNetZoneHandler extends BaseThingHandler {
                 logger.debug("Received a ZONE BALANCE channel command with a non DecimalType: {}", command);
             }
 
-        } else if (id.equals(RioConstants.CHANNEL_ZONETURNONVOLUME)) {
-            if (command instanceof PercentType) {
-                // getProtocolHandler().setZoneTurnOnVolume(((PercentType) command).intValue() / 100d);
-            } else if (command instanceof DecimalType) {
-                // getProtocolHandler().setZoneTurnOnVolume(((DecimalType) command).doubleValue());
+        } else if (id.equals(RNetConstants.CHANNEL_ZONETURNONVOLUME)) {
+
+            if (command instanceof OnOffType) {
+                getSystemHander().sendCommand(
+                        RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id, (byte) (100 / 2)));
+            } else if (command instanceof IncreaseDecreaseType) {
+                // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
+            } else if (command instanceof PercentType) {
+                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id,
+                        (byte) (((PercentType) command).intValue() / 2)));
             } else {
-                logger.debug("Received a ZONE TURN ON VOLUME channel command with a non PercentType/DecimalType: {}",
+                logger.debug("Received a ZONE TURN ON VOLUME channel command with a non PercentType/OnOffType: {}",
                         command);
             }
 
