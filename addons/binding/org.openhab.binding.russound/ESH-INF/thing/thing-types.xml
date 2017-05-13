@@ -6,6 +6,10 @@
         <label>Russound RNet Device</label>
         <description>Access point to Russound RNet control system (usually the main controller)</description>
 
+    <channels>
+            <channel id="allon" typeId="rnetSysAllOn" />
+            <channel id="alloff" typeId="rnetSysAllOff" />
+     </channels>
         <config-description>
             <parameter name="ipAddress" type="text" required="true">
                 <context>network-address</context>
@@ -661,5 +665,15 @@
         <label>Source</label>
         <description>Physical Source Number</description>
         <state min="1" max="6" />
+    </channel-type>
+    <channel-type id="rnetSysAllOn">
+        <item-type>Switch</item-type>
+        <label>All Zones On</label>
+        <description>Turns on All Zones</description>
+    </channel-type>
+    <channel-type id="rnetSysAllOff">
+        <item-type>Switch</item-type>
+        <label>All Zones Off</label>
+        <description>Turns off all zones</description>
     </channel-type>
 </thing:thing-descriptions>

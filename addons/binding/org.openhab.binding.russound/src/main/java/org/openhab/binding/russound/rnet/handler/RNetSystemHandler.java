@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -36,6 +37,9 @@ import org.openhab.binding.russound.internal.rio.system.RioSystemConfig;
 import org.openhab.binding.russound.internal.rio.system.RioSystemHandler;
 import org.openhab.binding.russound.rnet.internal.BusParser;
 import org.openhab.binding.russound.rnet.internal.PowerChangeParser;
+import org.openhab.binding.russound.rnet.internal.RNetConstants;
+import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands;
+import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands.ZoneCommand;
 import org.openhab.binding.russound.rnet.internal.RNetSystemConfig;
 import org.openhab.binding.russound.rnet.internal.SourceChangeParser;
 import org.openhab.binding.russound.rnet.internal.VolumeChangeParser;
@@ -139,6 +143,21 @@ public class RNetSystemHandler extends BaseBridgeHandler {
             // handleRefresh(channelUID.getId());
             return;
         }
+        String id = channelUID.getId();
+        if (id.equals(RNetConstants.CHANNEL_SYSALLON)) {
+            if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
+                sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x01));
+            } else {
+                logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+            }
+        } else if (id.equals(RNetConstants.CHANNEL_SYSALLOFF)) {
+            if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
+                sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x00));
+            } else {
+                logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+            }
+        }
+
     }
 
     /**

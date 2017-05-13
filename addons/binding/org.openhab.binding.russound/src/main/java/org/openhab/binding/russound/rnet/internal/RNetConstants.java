@@ -26,6 +26,9 @@ public class RNetConstants {
     public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES_UIDS = ImmutableSet.of(BRIDGE_TYPE_RNET,
             THING_TYPE_RNET_ZONE);
 
+    public static final String CHANNEL_SYSALLON = "allon";
+    public static final String CHANNEL_SYSALLOFF = "alloff";
+
     public static final String CHANNEL_ZONESOURCE = "source";
     public static final String CHANNEL_ZONEVOLUME = "volume";
     public static final String CHANNEL_ZONESTATUS = "status";
