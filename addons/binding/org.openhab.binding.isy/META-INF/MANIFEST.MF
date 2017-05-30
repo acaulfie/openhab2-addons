@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
  lib/websocket-api-9.2.14.v20151106.jar,
  lib/websocket-common-9.2.14.v20151106.jar,
- lib/websocket-client-9.2.14.v20151106.jar
+ lib/websocket-client-9.2.14.v20151106.jar,
+ lib/guava-18.0.jar
 Import-Package: 
  javax.ws.rs.client,
  javax.ws.rs.core,
@@ -29,5 +30,4 @@ Service-Component: OSGI-INF/*.xml
 Export-Package: org.openhab.binding.isy,
  org.openhab.binding.isy.handler
 Require-Bundle: org.eclipse.osgi,
- org.eclipse.jetty.util,
- com.google.guava
+ org.eclipse.jetty.util
