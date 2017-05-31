@@ -16,5 +16,5 @@ build:
     - mvn -f addons/binding/org.openhab.binding.russound/pom.xml -B install
     - ls -al $SHIPPABLE_BUILD_DIR
   on_success:
-    - aws s3 cp --debug $SHIPPABLE_BUILD_DIR/addons/binding/org.openhab.binding.russound/target/*.jar s3://craigham-pub/ --region "us-west-1"
+    - if [ "$IS_PULL_REQUEST" == false ]; then aws s3 cp --debug $SHIPPABLE_BUILD_DIR/addons/binding/org.openhab.binding.russound/target/*.jar s3://craigham-pub/ --region "us-west-1"; fi
    
