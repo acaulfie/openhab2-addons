@@ -105,25 +105,31 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     private IsyThingHandler getThingHandler(String address) {
         logger.debug("find thing handler for address: " + address);
-        String addressNoDeviceId = NodeAddress.stripDeviceId(address);
-        logger.debug("Find thing for address: " + addressNoDeviceId);
-        for (Thing thing : getThing().getThings()) {
-            if (!(IsyBindingConstants.PROGRAM_THING_TYPE.equals(thing.getThingTypeUID())
-                    || IsyBindingConstants.VARIABLE_THING_TYPE.equals(thing.getThingTypeUID())
-                    || IsyBindingConstants.SCENE_THING_TYPE.equals(thing.getThingTypeUID()))) {
+        if (!address.startsWith("n")) {
+            String addressNoDeviceId = NodeAddress.stripDeviceId(address);
+            logger.debug("Find thing for address: " + addressNoDeviceId);
+            for (Thing thing : getThing().getThings()) {
+                if (!(IsyBindingConstants.PROGRAM_THING_TYPE.equals(thing.getThingTypeUID())
+                        || IsyBindingConstants.VARIABLE_THING_TYPE.equals(thing.getThingTypeUID())
+                        || IsyBindingConstants.SCENE_THING_TYPE.equals(thing.getThingTypeUID()))) {
 
-                String theAddress = (String) thing.getConfiguration().get("address");
-                if (theAddress == null) {
-                    logger.debug("no address");
-                }
-                String thingsAddress = NodeAddress.stripDeviceId(theAddress);
-                if (addressNoDeviceId.equals(thingsAddress)) {
-                    logger.debug("address: " + thingsAddress);
-                    return (IsyDeviceHandler) thing.getHandler();
+                    String theAddress = (String) thing.getConfiguration().get("address");
+                    if (theAddress == null) {
+                        logger.debug("no address");
+                    }
+                    String thingsAddress = NodeAddress.stripDeviceId(theAddress);
+                    if (addressNoDeviceId.equals(thingsAddress)) {
+                        logger.debug("address: " + thingsAddress);
+                        return (IsyDeviceHandler) thing.getHandler();
+                    }
                 }
             }
+
+            logger.debug("No thing discovered for address: " + address);
+        } else {
+            logger.debug("Did not return thing handler because detected polygot node: {}", address);
         }
-        logger.debug("No thing discovered for address: " + address);
+
         return null;
     }
 
