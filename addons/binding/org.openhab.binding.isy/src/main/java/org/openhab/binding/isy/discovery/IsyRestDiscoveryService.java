@@ -200,7 +200,14 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         List<Node> nodes = insteon.getNodes();
         logger.debug("found nodes(#): " + nodes.size());
         for (Node node : nodes) {
-            NodeAddress nodeAddress = NodeAddress.parseAddressString(node.getAddress());
+            logger.debug("Parsing address: {}", node.getAddress());
+            NodeAddress nodeAddress;
+            try {
+                nodeAddress = NodeAddress.parseAddressString(node.getAddress());
+            } catch (Exception e) {
+                logger.info("Error parsing address: {}", node.getAddress(), e);
+                continue;
+            }
 
             properties = new HashMap<>(0);
             properties.put(IsyInsteonDeviceConfiguration.ADDRESS, nodeAddress.toStringNoDeviceId());
