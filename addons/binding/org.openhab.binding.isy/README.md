@@ -1,4 +1,4 @@
-# NOTE The latest build can be retrieved from: https://ci.m.quailholdings.com/job/openhab-2-binding-isy/
+# NOTE The latest build can be retrieved from: https://s3-us-west-2.amazonaws.com/craigham-pub/org.openhab.binding.isy-2.1.0-SNAPSHOT.jar
 
 
 # ISY Binding
