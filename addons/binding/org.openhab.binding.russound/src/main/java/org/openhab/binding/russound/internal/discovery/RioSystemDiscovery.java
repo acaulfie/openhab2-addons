@@ -51,7 +51,7 @@ public class RioSystemDiscovery extends AbstractDiscoveryService {
     private final Logger logger = LoggerFactory.getLogger(RioSystemDiscovery.class);
 
     /** The timeout to connect (in milliseconds) */
-    private static final int CONN_TIMEOUT_IN_MS = 100;
+    private static final int CONN_TIMEOUT_IN_MS = 300;
 
     /** The {@link ExecutorService} to use for scanning - will be null if not scanning */
     private ExecutorService executorService = null;
