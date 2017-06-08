@@ -103,7 +103,7 @@ public class IsyDeviceHandler extends AbtractIsyThingHandler {
                     .toString();
             logger.debug("insteon address for command is: " + isyAddress);
             if (command.equals(OnOffType.ON)) {
-                boolean result = bridgeHandler.getInsteonClient().changeNodeState("DON", "0", isyAddress);
+                boolean result = bridgeHandler.getInsteonClient().changeNodeState("DON", null, isyAddress);
                 logger.debug("result: " + result);
             } else if (command.equals(OnOffType.OFF)) {
                 bridgeHandler.getInsteonClient().changeNodeState("DOF", "0", isyAddress);

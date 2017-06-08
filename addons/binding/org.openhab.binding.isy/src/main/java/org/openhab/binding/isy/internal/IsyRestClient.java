@@ -83,8 +83,13 @@ public class IsyRestClient implements OHIsyClient {
     @Override
     public boolean changeNodeState(String command, String value, String address) {
         logger.debug("changeNodeState called, command: {}, value: {}, address: {}", command, value, address);
-        Builder changeNodeTarget = nodesTarget.path(address).path("cmd").path(command).path(value).request()
-                .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue);
+        WebTarget changeNodeWebTarget = nodesTarget.path(address).path("cmd").path(command);
+        if (value != null) {
+            changeNodeWebTarget = changeNodeWebTarget.path(value);
+        }
+        logger.debug("changeNodeState url: {}", changeNodeWebTarget.getUri().toString());
+        Builder changeNodeTarget = changeNodeWebTarget.request().header(AUTHORIZATIONHEADERNAME,
+                authorizationHeaderValue);
         Response result = changeNodeTarget.get();
         logger.debug("Result of call: {} ", result.toString());
         logger.debug("Result status:  {}", result.getStatus());
