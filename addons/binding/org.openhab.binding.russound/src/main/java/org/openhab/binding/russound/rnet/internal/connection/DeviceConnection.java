@@ -59,8 +59,10 @@ public class DeviceConnection {
     /**
      * Connects to the receiver by opening a socket connection through the IP
      * and port defined on constructor.
+     *
+     * @throws Exception
      **/
-    public boolean connect() {
+    public boolean connect() throws NoConnectionException {
         boolean returnValue = false;
         returnValue = mConnectionProvider.connect();
         // start status update listener
@@ -108,8 +110,9 @@ public class DeviceConnection {
      *
      * @param command
      *            the command to send.
+     * @throws NoConnectionException
      **/
-    public void sendCommand(byte[] command) {
+    public void sendCommand(byte[] command) throws NoConnectionException {
 
         sendCommand(command, false, retryCount);
     }
@@ -123,13 +126,15 @@ public class DeviceConnection {
      *            flag to close the connection when done or leave it open.
      * @param retry
      *            retry count.
+     * @throws NoConnectionException
      **/
-    private void sendCommand(byte[] command, boolean closeSocket, int retry) {
+    private void sendCommand(byte[] command, boolean closeSocket, int retry) throws NoConnectionException {
 
         logger.debug("send command called with bytes: {} ,close socket: ", StringHexUtils.byteArrayToHex(command),
                 closeSocket);
 
-        boolean connected = connect();
+        boolean connected;
+        connected = connect();
         logger.trace("Is connected: {}", connected);
         if (connected) {
             try {
@@ -254,7 +259,9 @@ public class DeviceConnection {
                     restartConnection = true;
 
                 } catch (Exception e) {
-
+                    if (mConnectionStateListener != null) {
+                        mConnectionStateListener.isConnected(false);
+                    }
                     if (interrupted != true && this.isInterrupted() != true) {
                         logger.error("Error occured during message waiting", e);
 

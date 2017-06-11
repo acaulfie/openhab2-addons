@@ -12,7 +12,7 @@ public interface ConnectionProvider {
 
     public boolean isConnected();
 
-    public boolean connect();
+    public boolean connect() throws NoConnectionException;
 
     public void disconnect() throws IOException;
 }
