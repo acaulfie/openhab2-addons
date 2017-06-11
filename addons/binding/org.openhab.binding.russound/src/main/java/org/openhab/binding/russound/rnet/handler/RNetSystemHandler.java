@@ -46,6 +46,7 @@ import org.openhab.binding.russound.rnet.internal.ZoneId;
 import org.openhab.binding.russound.rnet.internal.ZoneInfoParser;
 import org.openhab.binding.russound.rnet.internal.ZoneStateUpdate;
 import org.openhab.binding.russound.rnet.internal.connection.ConnectionProvider;
+import org.openhab.binding.russound.rnet.internal.connection.ConnectionStateListener;
 import org.openhab.binding.russound.rnet.internal.connection.DeviceConnection;
 import org.openhab.binding.russound.rnet.internal.connection.InputHander;
 import org.openhab.binding.russound.rnet.internal.connection.RNetInputStreamParser;
@@ -213,6 +214,13 @@ public class RNetSystemHandler extends BaseBridgeHandler {
 
         try {
             session = new DeviceConnection(connectionProvider, streamParser);
+            session.setConnectionStateListener(new ConnectionStateListener() {
+
+                @Override
+                public void isConnected(boolean value) {
+                    logger.debug("received connection notification: {}", value);
+                }
+            });
         } finally {
             sessionLock.unlock();
         }
