@@ -27,7 +27,6 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.russound.internal.rio.RioConstants;
 import org.openhab.binding.russound.internal.rio.controller.RioControllerHandler;
-import org.openhab.binding.russound.internal.rio.zone.RioZoneHandler;
 import org.openhab.binding.russound.rnet.internal.ChannelStateUpdate;
 import org.openhab.binding.russound.rnet.internal.RNetConstants;
 import org.openhab.binding.russound.rnet.internal.RNetProtocolCommands;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RNetZoneHandler extends BaseThingHandler {
     // Logger
-    private final Logger logger = LoggerFactory.getLogger(RioZoneHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(RNetZoneHandler.class);
 
     /**
      * The zone we are attached to
@@ -69,7 +68,7 @@ public class RNetZoneHandler extends BaseThingHandler {
             scheduler.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    logger.debug("Requesting zone info");
+                    logger.debug("Requesting zone info, id: {}", RNetZoneHandler.this.id);
                     getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ZONE_INFO, id, (byte) 0));
 
                     return null;

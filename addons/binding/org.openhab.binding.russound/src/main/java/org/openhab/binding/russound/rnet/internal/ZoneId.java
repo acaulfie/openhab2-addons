@@ -13,9 +13,13 @@ public class ZoneId {
     private int controllerId;
     private int zoneId;
 
+    // just so we don't have to create this every time...
+    private String toStringString;
+
     public ZoneId(int controller, int zone) {
         this.controllerId = controller;
         this.zoneId = zone;
+        toStringString = "[ZoneId]controller: " + this.controllerId + ", zoneId: " + this.zoneId;
     }
 
     public int getControllerId() {
@@ -49,8 +53,8 @@ public class ZoneId {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+
+        return toStringString;
     }
 
 }
