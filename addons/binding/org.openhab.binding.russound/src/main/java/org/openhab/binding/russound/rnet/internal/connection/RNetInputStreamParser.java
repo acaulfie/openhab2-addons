@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.openhab.binding.russound.rnet.internal.BusParser;
 import org.openhab.binding.russound.rnet.internal.StringHexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public class RNetInputStreamParser implements InputParser {
     private Logger logger = LoggerFactory.getLogger(RNetInputStreamParser.class);
     byte[] partialBytes = new byte[1000];
-    private List<BusParser> mBusParsers = new ArrayList<BusParser>();
 
     private InputHander inputHandler;
 
