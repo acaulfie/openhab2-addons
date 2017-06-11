@@ -49,6 +49,7 @@ import org.openhab.binding.russound.rnet.internal.connection.ConnectionProvider;
 import org.openhab.binding.russound.rnet.internal.connection.ConnectionStateListener;
 import org.openhab.binding.russound.rnet.internal.connection.DeviceConnection;
 import org.openhab.binding.russound.rnet.internal.connection.InputHander;
+import org.openhab.binding.russound.rnet.internal.connection.NoConnectionException;
 import org.openhab.binding.russound.rnet.internal.connection.RNetInputStreamParser;
 import org.openhab.binding.russound.rnet.internal.connection.SerialConnectionProvider;
 import org.openhab.binding.russound.rnet.internal.connection.TcpConnectionProvider;
@@ -247,8 +248,10 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         sessionLock.lock();
         pingLock.lock();
         try {
-            session.connect();
-            updateStatus(ThingStatus.ONLINE);
+            boolean connected = session.connect();
+            if (connected) {
+                updateStatus(ThingStatus.ONLINE);
+            }
         } catch (Exception e) {
             logger.error("Error connecting: {}", e.getMessage(), e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, response);
@@ -420,7 +423,12 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     }
 
     public void sendCommand(Byte[] command) {
-        session.sendCommand(ArrayUtils.toPrimitive(addChecksumandTerminator(command)));
+        try {
+            session.sendCommand(ArrayUtils.toPrimitive(addChecksumandTerminator(command)));
+        } catch (NoConnectionException e) {
+            logger.debug("received no connection exception", e);
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
+        }
 
     }
 

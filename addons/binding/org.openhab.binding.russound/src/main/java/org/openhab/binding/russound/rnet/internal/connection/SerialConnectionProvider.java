@@ -48,7 +48,7 @@ public class SerialConnectionProvider implements ConnectionProvider {
     }
 
     @Override
-    public boolean connect() {
+    public boolean connect() throws NoConnectionException {
         try {
             updateSerialProperties(m_devName);
             CommPortIdentifier ci = CommPortIdentifier.getPortIdentifier(m_devName);
@@ -70,17 +70,17 @@ public class SerialConnectionProvider implements ConnectionProvider {
             logger.info("successfully opened port {}", m_devName);
             return true;
         } catch (IOException e) {
-            logger.error("cannot open port: {}, got IOException ", m_devName, e);
+            throw new NoConnectionException("cannot open port got IOException: " + m_devName);
         } catch (PortInUseException e) {
-            logger.error("cannot open port: {}, it is in use!", m_devName);
+            throw new NoConnectionException("cannot open port: {}, it is in use! : " + m_devName);
         } catch (UnsupportedCommOperationException e) {
-            logger.error("got unsupported operation {} on port {}", e.getMessage(), m_devName);
+            throw new NoConnectionException("got unsupported operation: " + e.getMessage() + " on port:" + m_devName);
         } catch (NoSuchPortException e) {
-            logger.error("got no such port for {}", m_devName);
+            throw new NoConnectionException("got no such port for: " + m_devName);
         } catch (IllegalStateException e) {
-            logger.error("got unknown port type for {}", m_devName);
+            throw new NoConnectionException("got unknown port type for:" + m_devName);
         }
-        return false;
+
     }
 
     private void updateSerialProperties(String devName) {
