@@ -232,7 +232,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
                 connect();
             }
 
-        }, 1, TimeUnit.SECONDS);
+        }, 10, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -269,10 +269,10 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         retryConnectionLock.lock();
         try {
             if (retryConnection == null) {
-                final RNetSystemConfig rioConfig = getRNetConfig();
-                if (rioConfig != null) {
+                final RNetSystemConfig rnetConfig = getRNetConfig();
+                if (rnetConfig != null) {
 
-                    logger.info("Will try to reconnect in {} seconds", rioConfig.getRetryPolling());
+                    logger.info("Will try to reconnect in {} seconds", rnetConfig.getRetryPolling());
                     retryConnection = this.scheduler.schedule(new Runnable() {
                         @Override
                         public void run() {
@@ -286,7 +286,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
                             }
                         }
 
-                    }, rioConfig.getRetryPolling(), TimeUnit.SECONDS);
+                    }, rnetConfig.getRetryPolling(), TimeUnit.SECONDS);
                 }
             } else {
                 logger.debug("RetryConnection called when a retry connection is pending - ignoring request");
