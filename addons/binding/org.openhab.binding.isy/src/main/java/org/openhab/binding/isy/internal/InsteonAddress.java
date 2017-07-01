@@ -21,7 +21,7 @@ public class InsteonAddress implements NodeAddress {
         mByte1 = addressParts[0];
         mByte2 = addressParts[1];
         mByte3 = addressParts[2];
-        int deviceId = Integer.parseInt(addressParts[3]);
+        int deviceId = Byte.parseByte(addressParts[3], 16);
         if (deviceId > 0) {
             mDeviceId = deviceId;
         } else {
@@ -36,10 +36,12 @@ public class InsteonAddress implements NodeAddress {
         mDeviceId = deviceId;
     }
 
+    @Override
     public String toStringNoDeviceId() {
         return new StringBuilder().append(mByte1).append(" ").append(mByte2).append(" ").append(mByte3).toString();
     }
 
+    @Override
     public int getDeviceId() {
         return mDeviceId;
     }
@@ -68,14 +70,18 @@ public class InsteonAddress implements NodeAddress {
         }
     }
 
+    private String deviceIdAsHexUpper() {
+        return Integer.toHexString(mDeviceId).toUpperCase();
+    }
+
     public String toStringPaddedBytes() {
         return new StringBuilder().append(pad(mByte1)).append(" ").append(pad(mByte2)).append(" ").append(pad(mByte3))
-                .append(" ").append(mDeviceId).toString();
+                .append(" ").append(deviceIdAsHexUpper()).toString();
     }
 
     @Override
     public String toString() {
         return new StringBuilder().append(mByte1).append(" ").append(mByte2).append(" ").append(mByte3).append(" ")
-                .append(mDeviceId).toString();
+                .append(deviceIdAsHexUpper()).toString();
     }
 }
