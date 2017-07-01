@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Isy Binding
 Bundle-SymbolicName: org.openhab.binding.isy;singleton:=true
 Bundle-Vendor: openHAB
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .,
  lib/websocket-api-9.2.14.v20151106.jar,
@@ -16,7 +16,12 @@ Import-Package:
  javax.ws.rs.ext,
  org.apache.commons.codec,
  org.apache.commons.codec.binary,
+ org.eclipse.jetty.client.api,
+ org.eclipse.jetty.client.util,
+ org.eclipse.jetty.http,
  org.eclipse.jetty.io,
+ org.eclipse.jetty.util,
+ org.eclipse.jetty.util.component;version="9.2.12",
  org.eclipse.smarthome.config.core,
  org.eclipse.smarthome.config.discovery,
  org.eclipse.smarthome.core.library.types,
@@ -25,9 +30,8 @@ Import-Package:
  org.eclipse.smarthome.core.thing.binding.builder,
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
+ org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/*.xml
 Export-Package: org.openhab.binding.isy,
  org.openhab.binding.isy.handler
-Require-Bundle: org.eclipse.osgi,
- org.eclipse.jetty.util
