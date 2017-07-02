@@ -31,7 +31,7 @@ Import-Package:
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
  org.hamcrest.core;version="1.3.0",
- org.junit,
+ org.junit;resolution:=optional,
  org.osgi.framework,
  org.slf4j
 Service-Component: OSGI-INF/*.xml
