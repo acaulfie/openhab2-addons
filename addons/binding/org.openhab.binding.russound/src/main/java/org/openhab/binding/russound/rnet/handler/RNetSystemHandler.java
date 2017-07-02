@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * The bridge handler for a Russound System. This is the entry point into the whole russound system and is generally
  * points to the main controller. This implementation must be attached to a {@link RioSystemHandler} bridge.
  *
- * @author Tim Roberts
+ * @author Craig Hamilton
  */
 public class RNetSystemHandler extends BaseBridgeHandler {
     // Logger
@@ -131,37 +131,30 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         busParsers.add(new ZoneInfoParser());
     }
 
-    // private SocketSession<Byte[]> getSocketSession() {
-    // sessionLock.lock();
-    // try {
-    // return session;
-    // } finally {
-    // sessionLock.unlock();
-    // }
-    // }
-
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
 
         if (command instanceof RefreshType) {
-            // handleRefresh(channelUID.getId());
             return;
         }
         String id = channelUID.getId();
-        if (id.equals(RNetConstants.CHANNEL_SYSALLON)) {
-            if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
-                sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x01));
-            } else {
-                logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
-            }
-        } else if (id.equals(RNetConstants.CHANNEL_SYSALLOFF)) {
-            if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
-                sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x00));
-            } else {
-                logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
-            }
+        switch (channelUID.getId()) {
+            case RNetConstants.CHANNEL_SYSALLON:
+                if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
+                    sendCommand(
+                            RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x01));
+                } else {
+                    logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+                }
+                break;
+            case RNetConstants.CHANNEL_SYSALLOFF:
+                if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
+                    sendCommand(
+                            RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x00));
+                } else {
+                    logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+                }
         }
-
     }
 
     /**
@@ -253,7 +246,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         sessionLock.lock();
         pingLock.lock();
         try {
-            boolean connected = session.connect();
+            session.connect();
 
         } catch (Exception e) {
             logger.error("Error connecting: {}", e.getMessage(), e);

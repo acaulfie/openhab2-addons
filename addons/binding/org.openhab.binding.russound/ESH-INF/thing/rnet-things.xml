@@ -55,30 +55,7 @@
             <channel id="balance" typeId="zoneBalance" />
             <channel id="loudness" typeId="zoneLoudness" />
             <channel id="turnonvolume" typeId="zoneTurnOnVolume" />
-            <channel id="donotdisturb" typeId="zoneDoNotDisturb" />
-            <channel id="partymode" typeId="zonePartyMode" />
-            <channel id="mute" typeId="zoneMute" />
-            <channel id="page" typeId="zonePage" />
-            <channel id="sharedsource" typeId="zoneSharedSource" />
-            <channel id="sleeptimeremaining" typeId="zoneSleepTimeRemaining" />
-            <channel id="lasterror" typeId="zoneLastError" />
-            <channel id="enabled" typeId="zoneEnabled" />
-            <channel id="repeat" typeId="zoneRepeat" />
-            <channel id="shuffle" typeId="zoneShuffle" />
-            <channel id="rating" typeId="zoneRating" />
-            <channel id="keypress" typeId="zoneKeyPress" />
-            <channel id="keyrelease" typeId="zoneKeyRelease" />
-            <channel id="keyhold" typeId="zoneKeyHold" />
-            <channel id="keycode" typeId="zoneKeyCode" />
-            <channel id="event" typeId="zoneEvent" />
-
-            <channel id="systemfavorites" typeId="zoneSysFavorites" />
-            <channel id="zonefavorites" typeId="zoneFavorites" />
-            <channel id="presets" typeId="zonePresets" />
-
-            <channel id="mminit" typeId="zoneMMInit" />
-            <channel id="mmcontextmenu" typeId="zoneMMContextMenu" />
-
+           <!--   <channel id="mute" typeId="zoneMute" />  -->
         </channels>
 
         <config-description>
