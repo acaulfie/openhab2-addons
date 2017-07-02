@@ -220,6 +220,11 @@ public class RNetSystemHandler extends BaseBridgeHandler {
                 @Override
                 public void isConnected(boolean value) {
                     logger.debug("received connection notification: {}", value);
+                    if (value) {
+                        updateStatus(ThingStatus.ONLINE);
+                    } else {
+                        updateStatus(ThingStatus.OFFLINE);
+                    }
                 }
             });
         } finally {
@@ -249,9 +254,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         pingLock.lock();
         try {
             boolean connected = session.connect();
-            if (connected) {
-                updateStatus(ThingStatus.ONLINE);
-            }
+
         } catch (Exception e) {
             logger.error("Error connecting: {}", e.getMessage(), e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, response);

@@ -15,7 +15,6 @@ import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -24,7 +23,6 @@ import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.russound.internal.rio.RioConstants;
 import org.openhab.binding.russound.internal.rio.controller.RioControllerHandler;
 import org.openhab.binding.russound.rnet.internal.ChannelStateUpdate;
@@ -49,7 +47,8 @@ public class RNetZoneHandler extends BaseThingHandler {
      * The zone we are attached to
      */
     private ZoneId id;
-    private long lastRefreshed = 0;
+    private long lastRefreshRequest = 0;
+    private Collection<ChannelStateUpdate> lastUpdate;
 
     /**
      * Constructs the handler from the {@link Thing}
@@ -62,9 +61,9 @@ public class RNetZoneHandler extends BaseThingHandler {
     }
 
     private void requestZoneInfo() {
-        long elapsed = System.currentTimeMillis() - this.lastRefreshed;
-        if (elapsed > 30000) {
-            lastRefreshed = System.currentTimeMillis();
+        long elapsed = System.currentTimeMillis() - this.lastRefreshRequest;
+        if (elapsed > 200) {
+            lastRefreshRequest = System.currentTimeMillis();
             scheduler.submit(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -74,201 +73,104 @@ public class RNetZoneHandler extends BaseThingHandler {
                     return null;
                 }
             });
+        } else {
+            logger.debug("Did not request zone info as elapsed since last call is: {}", elapsed);
+            if (this.lastUpdate != null) {
+                processUpdates(this.lastUpdate);
+            }
         }
     }
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
 
-        if (command instanceof RefreshType) {
-            if (getThing().getStatus() != ThingStatus.ONLINE) {
-                return;
-            }
-            requestZoneInfo();
-
-            return;
-        }
-
         String id = channelUID.getId();
 
-        if (id == null) {
-            logger.debug("Called with a null channel id - ignoring");
-            return;
+        switch (id) {
+            case RNetConstants.CHANNEL_ZONEBASS:
+                if (command instanceof DecimalType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BASS_SET, this.id,
+                            (byte) (((DecimalType) command).intValue() + 10)));
+                } else {
+                    logger.debug("Received a ZONE BASS channel command with a non DecimalType: {}", command);
+                }
+                break;
+            case RNetConstants.CHANNEL_ZONETREBLE:
+                if (command instanceof DecimalType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TREBLE_SET, this.id,
+                            (byte) (((DecimalType) command).intValue() + 10)));
+                } else {
+                    logger.debug("Received a ZONE TREBLE channel command with a non DecimalType: {}", command);
+                }
+                break;
+            case RioConstants.CHANNEL_ZONEBALANCE:
+                if (command instanceof DecimalType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BALANCE_SET, this.id,
+                            (byte) (((DecimalType) command).intValue() + 10)));
+                    // getProtocolHandler().setZoneBalance(((DecimalType) command).intValue());
+                } else {
+                    logger.debug("Received a ZONE BALANCE channel command with a non DecimalType: {}", command);
+                }
+                break;
+            case RNetConstants.CHANNEL_ZONETURNONVOLUME:
+                if (command instanceof OnOffType) {
+                    getSystemHander().sendCommand(
+                            RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id, (byte) (100 / 2)));
+                } else if (command instanceof IncreaseDecreaseType) {
+                    // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
+                } else if (command instanceof PercentType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id,
+                            (byte) (((PercentType) command).intValue() / 2)));
+                } else {
+                    logger.debug("Received a ZONE TURN ON VOLUME channel command with a non PercentType/OnOffType: {}",
+                            command);
+                }
+                break;
+            case RNetConstants.CHANNEL_ZONELOUDNESS:
+                if (command instanceof OnOffType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.LOUDNESS_SET, this.id,
+                            command == OnOffType.ON ? (byte) 0x01 : 0));
+                } else {
+                    logger.debug("Received a ZONE TURN ON VOLUME channel command with a non OnOffType: {}", command);
+                }
+                break;
+            case RNetConstants.CHANNEL_ZONESOURCE:
+                if (command instanceof DecimalType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.SOURCE_SET, this.id,
+                            (byte) (((DecimalType) command).intValue() - 1)));
+                } else {
+                    logger.debug("Received a ZONE SOURCE channel command with a non DecimalType: {}", command);
+                }
+                break;
+            case RNetConstants.CHANNEL_ZONESTATUS:
+                if (command instanceof OnOffType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.POWER_SET, this.id,
+                            command == OnOffType.ON ? (byte) 0x01 : 0));
+                } else {
+                    logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+                }
+                break;
+            case RioConstants.CHANNEL_ZONEVOLUME:
+                if (command instanceof OnOffType) {
+                    getSystemHander().sendCommand(
+                            RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id, (byte) (100 / 2)));
+                } else if (command instanceof IncreaseDecreaseType) {
+                    // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
+                } else if (command instanceof PercentType) {
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id,
+                            (byte) (((PercentType) command).intValue() / 2)));
+                } else if (command instanceof DecimalType) {
+                    // getProtocolHandler().setZoneVolume(((DecimalType) command).doubleValue());
+                } else {
+                    logger.debug(
+                            "Received a ZONE VOLUME channel command with a non OnOffType/IncreaseDecreaseType/PercentType/DecimalTye: {}",
+                            command);
+                }
+                break;
+            default:
+                logger.debug("Unknown/Unsupported Channel id: {}", id);
         }
 
-        if (id.equals(RNetConstants.CHANNEL_ZONEBASS)) {
-            if (command instanceof DecimalType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BASS_SET, this.id,
-                        (byte) (((DecimalType) command).intValue() + 10)));
-            } else {
-                logger.debug("Received a ZONE BASS channel command with a non DecimalType: {}", command);
-            }
-
-        } else if (id.equals(RNetConstants.CHANNEL_ZONETREBLE)) {
-            if (command instanceof DecimalType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TREBLE_SET, this.id,
-                        (byte) (((DecimalType) command).intValue() + 10)));
-            } else {
-                logger.debug("Received a ZONE TREBLE channel command with a non DecimalType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEBALANCE)) {
-            if (command instanceof DecimalType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BALANCE_SET, this.id,
-                        (byte) (((DecimalType) command).intValue() + 10)));
-                // getProtocolHandler().setZoneBalance(((DecimalType) command).intValue());
-            } else {
-                logger.debug("Received a ZONE BALANCE channel command with a non DecimalType: {}", command);
-            }
-
-        } else if (id.equals(RNetConstants.CHANNEL_ZONETURNONVOLUME)) {
-
-            if (command instanceof OnOffType) {
-                getSystemHander().sendCommand(
-                        RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id, (byte) (100 / 2)));
-            } else if (command instanceof IncreaseDecreaseType) {
-                // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
-            } else if (command instanceof PercentType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id,
-                        (byte) (((PercentType) command).intValue() / 2)));
-            } else {
-                logger.debug("Received a ZONE TURN ON VOLUME channel command with a non PercentType/OnOffType: {}",
-                        command);
-            }
-
-        } else if (id.equals(RNetConstants.CHANNEL_ZONELOUDNESS)) {
-            if (command instanceof OnOffType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.LOUDNESS_SET, this.id,
-                        command == OnOffType.ON ? (byte) 0x01 : 0));
-            } else {
-                logger.debug("Received a ZONE TURN ON VOLUME channel command with a non OnOffType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONESLEEPTIMEREMAINING)) {
-            if (command instanceof DecimalType) {
-                // getProtocolHandler().setZoneSleepTimeRemaining(((DecimalType) command).intValue());
-            } else {
-                logger.debug("Received a ZONE SLEEP TIME REMAINING channel command with a non DecimalType: {}",
-                        command);
-            }
-        } else if (id.equals(RNetConstants.CHANNEL_ZONESOURCE)) {
-            if (command instanceof DecimalType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.SOURCE_SET, this.id,
-                        (byte) (((DecimalType) command).intValue() - 1)));
-            } else {
-                logger.debug("Received a ZONE SOURCE channel command with a non DecimalType: {}", command);
-            }
-
-        } else if (id.equals(RNetConstants.CHANNEL_ZONESTATUS)) {
-            if (command instanceof OnOffType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.POWER_SET, this.id,
-                        command == OnOffType.ON ? (byte) 0x01 : 0));
-            } else {
-                logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
-            }
-        } else if (id.equals(RioConstants.CHANNEL_ZONEPARTYMODE)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().setZonePartyMode(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE PARTY MODE channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEDONOTDISTURB)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().setZoneDoNotDisturb(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE DO NOT DISTURB channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEMUTE)) {
-            if (command instanceof OnOffType) {
-                // getProtocolHandler().toggleZoneMute();
-            } else {
-                logger.debug("Received a ZONE MUTE channel command with a non OnOffType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEREPEAT)) {
-            if (command instanceof OnOffType) {
-                // getProtocolHandler().toggleZoneRepeat();
-            } else {
-                logger.debug("Received a ZONE REPEAT channel command with a non OnOffType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONESHUFFLE)) {
-            if (command instanceof OnOffType) {
-                // getProtocolHandler().toggleZoneShuffle();
-            } else {
-                logger.debug("Received a ZONE SHUFFLE channel command with a non OnOffType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEVOLUME)) {
-            if (command instanceof OnOffType) {
-                getSystemHander().sendCommand(
-                        RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id, (byte) (100 / 2)));
-            } else if (command instanceof IncreaseDecreaseType) {
-                // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
-            } else if (command instanceof PercentType) {
-                getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id,
-                        (byte) (((PercentType) command).intValue() / 2)));
-            } else if (command instanceof DecimalType) {
-                // getProtocolHandler().setZoneVolume(((DecimalType) command).doubleValue());
-            } else {
-                logger.debug(
-                        "Received a ZONE VOLUME channel command with a non OnOffType/IncreaseDecreaseType/PercentType/DecimalTye: {}",
-                        command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONERATING)) {
-            if (command instanceof OnOffType) {
-                // getProtocolHandler().setZoneRating(command == OnOffType.ON);
-            } else {
-                logger.debug("Received a ZONE RATING channel command with a non OnOffType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEKEYPRESS)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().sendKeyPress(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE KEYPRESS channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEKEYRELEASE)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().sendKeyRelease(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE KEYRELEASE channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEKEYHOLD)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().sendKeyHold(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE KEYHOLD channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEKEYCODE)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().sendKeyCode(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE KEYCODE channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEEVENT)) {
-            if (command instanceof StringType) {
-                // getProtocolHandler().sendEvent(((StringType) command).toString());
-            } else {
-                logger.debug("Received a ZONE EVENT channel command with a non StringType: {}", command);
-            }
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEMMINIT)) {
-            // getProtocolHandler().sendMMInit();
-
-        } else if (id.equals(RioConstants.CHANNEL_ZONEMMCONTEXTMENU)) {
-            // getProtocolHandler().sendMMContextMenu();
-
-        } else {
-            logger.debug("Unknown/Unsupported Channel id: {}", id);
-        }
     }
 
     /**
@@ -317,15 +219,24 @@ public class RNetZoneHandler extends BaseThingHandler {
         }
         this.id = new ZoneId(configController, configZone);
         updateStatus(ThingStatus.ONLINE);
+        // requestZoneInfo();
+    }
+
+    @Override
+    public void channelLinked(ChannelUID channelUID) {
+        logger.debug("rnet zone channel linked: {}", channelUID);
+        requestZoneInfo();
     }
 
     public void processUpdates(Collection<ChannelStateUpdate> updates) {
 
+        this.lastUpdate = updates;
+        this.lastRefreshRequest = System.currentTimeMillis();
         for (ChannelStateUpdate update : updates) {
             // if we change power, and are doing it from a collection of size one (ie not an overall zone update) then
             // let's reload the other attributes as well and the turn on attributes kick in
             if (updates.size() == 1 && RNetConstants.CHANNEL_ZONESTATUS.equals(update.getChannel())) {
-                this.lastRefreshed = 0;
+                this.lastRefreshRequest = 0;
                 requestZoneInfo();
             }
             updateState(update.getChannel(), update.getState());

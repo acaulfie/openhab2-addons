@@ -14,13 +14,20 @@ import java.util.List;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZoneInfoParser implements BusParser {
+    private final Logger logger = LoggerFactory.getLogger(ZoneInfoParser.class);
 
     @Override
     public boolean matches(Byte[] bytes) {
-        return bytes[0] == (byte) 0xF0 && bytes[3] == (byte) 0x70 && bytes[9] == (byte) 0x04
+        boolean matches = bytes[0] == (byte) 0xF0 && bytes[3] == (byte) 0x70 && bytes[9] == (byte) 0x04
                 && bytes[10] == (byte) 0x02;
+        if (matches) {
+            logger.debug("Found zone info message: {}", StringHexUtils.byteArrayToHex(bytes));
+        }
+        return matches;
     }
 
     @Override

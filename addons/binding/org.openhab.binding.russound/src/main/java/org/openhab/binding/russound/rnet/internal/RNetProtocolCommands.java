@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RNetProtocolCommands implements RNetCommand {
-    private final Logger logger = LoggerFactory.getLogger(RNetProtocolCommands.class);
+    private static Logger logger = LoggerFactory.getLogger(RNetProtocolCommands.class);
 
     public enum ZoneCommand {
         VOLUME_SET,
@@ -119,6 +119,7 @@ public class RNetProtocolCommands implements RNetCommand {
     }
 
     public static Byte[] getCommand(ZoneCommand command, ZoneId zoneId, byte value) {
+        logger.debug("getCommand called, command: {}, zoneId: {}, value: {}", command, zoneId, value);
         return zoneCommands[command.ordinal()].getCommand(zoneId, value);
     }
 }

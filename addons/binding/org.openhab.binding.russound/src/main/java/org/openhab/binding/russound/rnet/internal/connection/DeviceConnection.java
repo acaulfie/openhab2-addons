@@ -65,12 +65,16 @@ public class DeviceConnection {
     public boolean connect() throws NoConnectionException {
         boolean returnValue = false;
         returnValue = mConnectionProvider.connect();
+
         // start status update listener
         if (dataListener == null) {
             dataListener = new DataListener();
             dataListener.start();
         }
 
+        if (mConnectionStateListener != null) {
+            mConnectionStateListener.isConnected(returnValue);
+        }
         logger.debug("connect() returning: {}", returnValue);
         return returnValue;
     }
