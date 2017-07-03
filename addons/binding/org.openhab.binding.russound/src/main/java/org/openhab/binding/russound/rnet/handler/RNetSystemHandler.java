@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -30,10 +29,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.openhab.binding.russound.internal.discovery.RioSystemDeviceDiscoveryService;
 import org.openhab.binding.russound.internal.net.SocketSession;
-import org.openhab.binding.russound.internal.rio.system.RioSystemConfig;
-import org.openhab.binding.russound.internal.rio.system.RioSystemHandler;
 import org.openhab.binding.russound.rnet.internal.BusParser;
 import org.openhab.binding.russound.rnet.internal.PowerChangeParser;
 import org.openhab.binding.russound.rnet.internal.RNetConstants;
@@ -58,7 +54,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The bridge handler for a Russound System. This is the entry point into the whole russound system and is generally
- * points to the main controller. This implementation must be attached to a {@link RioSystemHandler} bridge.
+ * points to the main controller. This implementation must be attached to a {@link RNetSystemHandler} bridge.
  *
  * @author Craig Hamilton
  */
@@ -110,13 +106,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      * The lock used to control access to {@link #ping}
      */
     private final ReentrantLock pingLock = new ReentrantLock();
-
-    /**
-     * The discovery service to discover the zones/sources, etc
-     * Will be null if not active.
-     */
-    private final AtomicReference<RioSystemDeviceDiscoveryService> discoveryService = new AtomicReference<RioSystemDeviceDiscoveryService>(
-            null);
 
     /**
      * Constructs the handler from the {@link Bridge}
@@ -235,10 +224,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     }
 
     /**
-     * Attempts to connect to the system. If successfully connect, the {@link RioSystemProtocol#login()} will be
-     * called to log into the system (if needed). Once completed, a ping job will be created to keep the connection
-     * alive. If a connection cannot be established (or login failed), the connection attempt will be retried later (via
-     * {@link #retryConnect()})
+     * Attempts to connect to the system.
      */
     private void connect() {
         String response = "Server is offline - will try to reconnect later";
@@ -261,7 +247,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     }
 
     /**
-     * Retries the connection attempt - schedules a job in {@link RioSystemConfig#getRetryPolling()} seconds to
+     * Retries the connection attempt - schedules a job in {@link RNetSystemConfig#getRetryPolling()} seconds to
      * call the {@link #connect()} method. If a retry attempt is pending, the request is ignored.
      */
     protected void reconnect() {
@@ -321,10 +307,10 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     }
 
     /**
-     * Simple gets the {@link RioSystemConfig} from the {@link Thing} and will set the status to offline if not
+     * Simple gets the {@link RNetSystemConfig} from the {@link Thing} and will set the status to offline if not
      * found.
      *
-     * @return a possible null {@link RioSystemConfig}
+     * @return a possible null {@link RNetSystemConfig}
      */
     public RNetSystemConfig getRNetConfig() {
         configLock.lock();
@@ -339,43 +325,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
             return config;
         } finally {
             configLock.unlock();
-        }
-    }
-
-    /**
-     * Registers the {@link RioSystemDeviceDiscoveryService} with this handler. The discovery service will be called in
-     * {@link #startScan(RioSystemConfig)} when a device should be scanned and 'things' discovered from it
-     *
-     * @param service a possibly null {@link RioSystemDeviceDiscoveryService}
-     */
-    public void registerDiscoveryService(RioSystemDeviceDiscoveryService service) {
-        discoveryService.set(service);
-    }
-
-    @Override
-    public void handleConfigurationUpdate(Map<String, Object> configurationParameters) {
-        // TODO Auto-generated method stub
-        super.handleConfigurationUpdate(configurationParameters);
-    }
-
-    /**
-     * Helper method to possibly start a scan. A scan will ONLY be started if the {@link RioSystemConfig#isScanDevice()}
-     * is true and a discovery service has been set ({@link #registerDiscoveryService(RioSystemDeviceDiscoveryService)})
-     *
-     * @param sysConfig a non-null {@link RioSystemConfig}
-     */
-    private void startScan(RioSystemConfig sysConfig) {
-        final RioSystemDeviceDiscoveryService service = discoveryService.get();
-        if (service != null) {
-            if (sysConfig != null && sysConfig.isScanDevice()) {
-                this.scheduler.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        logger.info("Starting device discovery");
-                        service.scanDevice();
-                    }
-                });
-            }
         }
     }
 
