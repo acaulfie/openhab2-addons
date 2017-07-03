@@ -6,9 +6,6 @@ Bundle-Vendor: openHAB
 Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
- lib/websocket-api-9.2.14.v20151106.jar,
- lib/websocket-common-9.2.14.v20151106.jar,
- lib/websocket-client-9.2.14.v20151106.jar,
  lib/guava-18.0.jar
 Import-Package: 
  javax.ws.rs.client,
@@ -30,6 +27,10 @@ Import-Package:
  org.eclipse.smarthome.core.thing.binding.builder,
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
+ org.eclipse.jetty.websocket.api,
+ org.eclipse.jetty.websocket.api.annotations,
+ org.eclipse.jetty.websocket.client,
+ org.eclipse.jetty.websocket.common,
  org.hamcrest.core;resolution:=optional,
  org.junit;resolution:=optional,
  org.osgi.framework,

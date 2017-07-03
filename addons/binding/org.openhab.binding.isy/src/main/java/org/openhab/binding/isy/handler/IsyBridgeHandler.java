@@ -79,17 +79,16 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
                     @Override
                     public void onDeviceOnLine() {
-                        // TODO Auto-generated method stub
+                        updateStatus(ThingStatus.ONLINE);
 
                     }
 
                     @Override
                     public void onDeviceOffLine() {
-                        // TODO Auto-generated method stub
+                        updateStatus(ThingStatus.OFFLINE);
 
                     }
                 });
-        updateStatus(ThingStatus.ONLINE);
 
     }
 
