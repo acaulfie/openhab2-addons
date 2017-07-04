@@ -55,7 +55,7 @@
             <channel id="balance" typeId="zoneBalance" />
             <channel id="loudness" typeId="zoneLoudness" />
             <channel id="turnonvolume" typeId="zoneTurnOnVolume" />
-           <!--   <channel id="mute" typeId="zoneMute" />  -->
+            <channel id="mute" typeId="zoneMute" /> 
         </channels>
 
         <config-description>

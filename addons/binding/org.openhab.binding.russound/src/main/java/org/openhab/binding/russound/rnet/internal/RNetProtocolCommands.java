@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 public class RNetProtocolCommands implements RNetCommand {
     private static Logger logger = LoggerFactory.getLogger(RNetProtocolCommands.class);
+    private static final int NO_VALUE_NEEDED = -33;
+    public static final byte NO_VALUE = (byte) 0xFF;
 
     public enum ZoneCommand {
         VOLUME_SET,
@@ -26,6 +28,7 @@ public class RNetProtocolCommands implements RNetCommand {
         LOUDNESS_SET,
         TREBLE_SET,
         TURNONVOLUME_SET,
+        MUTE,
         ALLONOFF_SET
     }
 
@@ -61,6 +64,9 @@ public class RNetProtocolCommands implements RNetCommand {
             (byte) 0x00, (byte) 0x00, (byte) 0x70, (byte) 0x00, (byte) 0x05, (byte) 0x02, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x01,
             (byte) 0x00, (byte) 0x00 };
+    private static Byte[] muteBytes = new Byte[] { (byte) 0xf0, (byte) 0x00, (byte) 0x00, (byte) 0x7f, (byte) 0x00,
+            (byte) 0x00, (byte) 0x70, (byte) 0x05, (byte) 0x02, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0xf1,
+            (byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x01 };
 
     private static RNetCommand[] zoneCommands = { new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
             new RNetProtocolCommands(powerBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
@@ -71,6 +77,7 @@ public class RNetProtocolCommands implements RNetCommand {
             new RNetProtocolCommands(loudnessBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
             new RNetProtocolCommands(trebleBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
             new RNetProtocolCommands(turnOnVolumeBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
+            new RNetProtocolCommands(muteBytes, new int[] { 4 }, new int[] { 5 }, NO_VALUE_NEEDED),
             new RNetAllOnOffCommand() };
 
     private Byte[] commandBytes;
@@ -110,7 +117,10 @@ public class RNetProtocolCommands implements RNetCommand {
         for (Integer controllerOrdinal : controllerBytes) {
             commandByteCopy[controllerOrdinal] = (byte) (zoneId.getControllerId() - 1);
         }
-        commandByteCopy[this.valueOrdinal] = value;
+
+        if (this.valueOrdinal != NO_VALUE_NEEDED) {
+            commandByteCopy[this.valueOrdinal] = value;
+        }
 
         logger.debug("getCommandReturning zone: {}, controller: {}, value: {}", zoneId.getZoneId(),
                 zoneId.getControllerId(), value);

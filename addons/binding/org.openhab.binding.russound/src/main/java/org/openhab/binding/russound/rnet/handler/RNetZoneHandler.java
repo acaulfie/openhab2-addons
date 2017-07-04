@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.IncreaseDecreaseType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -107,7 +106,6 @@ public class RNetZoneHandler extends BaseThingHandler {
                 if (command instanceof DecimalType) {
                     getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.BALANCE_SET, this.id,
                             (byte) (((DecimalType) command).intValue() + 10)));
-                    // getProtocolHandler().setZoneBalance(((DecimalType) command).intValue());
                 } else {
                     logger.debug("Received a ZONE BALANCE channel command with a non DecimalType: {}", command);
                 }
@@ -116,8 +114,6 @@ public class RNetZoneHandler extends BaseThingHandler {
                 if (command instanceof OnOffType) {
                     getSystemHander().sendCommand(
                             RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id, (byte) (100 / 2)));
-                } else if (command instanceof IncreaseDecreaseType) {
-                    // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
                 } else if (command instanceof PercentType) {
                     getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.TURNONVOLUME_SET, this.id,
                             (byte) (((PercentType) command).intValue() / 2)));
@@ -150,20 +146,28 @@ public class RNetZoneHandler extends BaseThingHandler {
                     logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
                 }
                 break;
+            case RNetConstants.CHANNEL_ZONEMUTE:
+                if (command instanceof OnOffType) {
+                    getSystemHander().sendCommand(
+                            RNetProtocolCommands.getCommand(ZoneCommand.MUTE, this.id, RNetProtocolCommands.NO_VALUE));
+                    updateState(RNetConstants.CHANNEL_ZONEMUTE, OnOffType.OFF);
+                } else {
+                    logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
+                }
+                break;
             case RioConstants.CHANNEL_ZONEVOLUME:
                 if (command instanceof OnOffType) {
                     getSystemHander().sendCommand(
                             RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id, (byte) (100 / 2)));
-                } else if (command instanceof IncreaseDecreaseType) {
-                    // getProtocolHandler().setZoneVolume(command == IncreaseDecreaseType.INCREASE);
                 } else if (command instanceof PercentType) {
                     getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id,
                             (byte) (((PercentType) command).intValue() / 2)));
                 } else if (command instanceof DecimalType) {
-                    // getProtocolHandler().setZoneVolume(((DecimalType) command).doubleValue());
+                    getSystemHander().sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.VOLUME_SET, this.id,
+                            (byte) (((DecimalType) command).intValue() / 2)));
                 } else {
                     logger.debug(
-                            "Received a ZONE VOLUME channel command with a non OnOffType/IncreaseDecreaseType/PercentType/DecimalTye: {}",
+                            "Received a ZONE VOLUME channel command with a non OnOffType/PercentType/DecimalTye: {}",
                             command);
                 }
                 break;
