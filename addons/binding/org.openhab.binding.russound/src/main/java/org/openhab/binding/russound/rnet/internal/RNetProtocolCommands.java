@@ -68,7 +68,8 @@ public class RNetProtocolCommands implements RNetCommand {
             (byte) 0x00, (byte) 0x70, (byte) 0x05, (byte) 0x02, (byte) 0x02, (byte) 0x00, (byte) 0x00, (byte) 0xf1,
             (byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x0D, (byte) 0x00, (byte) 0x01 };
 
-    private static RNetCommand[] zoneCommands = { new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, 17, 15),
+    private static RNetCommand[] zoneCommands = {
+            new RNetProtocolCommands(volumeBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
             new RNetProtocolCommands(powerBytes, new int[] { 1, 4 }, new int[] { 5, 17 }, 15),
             new RNetProtocolCommands(sourceBytes, new int[] { 1, 4 }, 5, 17),
             new RNetProtocolCommands(bassBytes, new int[] { 1, 4 }, new int[] { 5, 11 }, 21),
