@@ -10,9 +10,9 @@ package org.openhab.binding.russound.rnet.handler;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -25,8 +25,8 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
+import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
-import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.russound.internal.net.SocketSession;
@@ -67,7 +67,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      * online
      */
     private RNetSystemConfig config;
-    private Map<ZoneId, Thing> zones = new HashMap<ZoneId, Thing>();
     /**
      * These bus parser are responsible for examining a message and letting us know if they denote a BusAction
      */
@@ -78,7 +77,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
     private final ReentrantLock configLock = new ReentrantLock();
 
     /**
-     * The {@link SocketSession} telnet session to the switch. Will be null if not connected.
+     * The {@link SocketSession} session to the switch. Will be null if not connected.
      */
     private DeviceConnection session;
 
@@ -126,7 +125,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         if (command instanceof RefreshType) {
             return;
         }
-        String id = channelUID.getId();
         switch (channelUID.getId()) {
             case RNetConstants.CHANNEL_SYSALLON:
                 if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
@@ -174,13 +172,12 @@ public class RNetSystemHandler extends BaseBridgeHandler {
                 for (BusParser parser : busParsers) {
                     if (parser.matches(bytes)) {
                         ZoneStateUpdate updates = parser.process(bytes);
-                        Thing zone = zones.get(updates.getZoneId());
-                        if (zone != null) {
-                            ((RNetZoneHandler) zone.getHandler()).processUpdates(updates.getStateUpdates());
+                        Optional<Thing> zone = getChildThing(RNetConstants.THING_TYPE_RNET_ZONE, updates.getZoneId());
+                        if (zone.isPresent()) {
+                            ((RNetZoneHandler) zone.get().getHandler()).processUpdates(updates.getStateUpdates());
                         }
                     }
                 }
-
             }
         });
         // lets pick between tcp or serial. by convention if connection address starts with /tcp/ then we will be using
@@ -341,32 +338,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
 
     }
 
-    /**
-     * Overrides the base to call {@link #childChanged(ThingHandler)} to recreate the sources/controllers names
-     */
-    @Override
-    public void childHandlerInitialized(ThingHandler childHandler, Thing childThing) {
-        // childChanged(childHandler, true);
-        logger.debug("child handler initialized, child: {}", childThing);
-        try {
-            zones.put(zoneIdFromThing(childThing), childThing);
-        } catch (IllegalArgumentException e) {
-            logger.error("Configuration error, childThing expected to have controller and zone field", e);
-        }
-    }
-
-    /**
-     * Overrides the base to call {@link #childChanged(ThingHandler)} to recreate the sources/controllers names
-     */
-    @Override
-    public void childHandlerDisposed(ThingHandler childHandler, Thing childThing) {
-        try {
-            zones.remove(zoneIdFromThing(childThing));
-        } catch (IllegalArgumentException e) {
-            logger.error("Configuration error, childThing expected to have controller and zone field", e);
-        }
-    }
-
     public void sendCommand(Byte[] command) {
         try {
             session.sendCommand(ArrayUtils.toPrimitive(addChecksumandTerminator(command)));
@@ -393,4 +364,22 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         byte checksum = (byte) (sum & 0x007F);
         return checksum;
     }
+
+    private Optional<Thing> getChildThing(ThingTypeUID type, ZoneId zoneId) {
+        Bridge bridge = getThing();
+
+        List<Thing> things = bridge.getThings();
+        for (Thing thing : things) {
+            if (type.equals(thing.getThingTypeUID())) {
+                if (((Number) thing.getConfiguration().get(RNetConstants.THING_PROPERTIES_CONTROLLER))
+                        .intValue() == zoneId.getControllerId()
+                        && ((Number) thing.getConfiguration().get(RNetConstants.THING_PROPERTIES_ZONE))
+                                .intValue() == zoneId.getZoneId()) {
+                    return Optional.of(thing);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
 }

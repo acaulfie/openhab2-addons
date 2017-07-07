@@ -38,4 +38,7 @@ public class RNetConstants {
     public static final String CHANNEL_ZONEBASS = "bass";
     public static final String CHANNEL_ZONEMUTE = "mute";
     public static final String CHANNEL_ZONETURNONVOLUME = "turnonvolume";
+
+    public final static String THING_PROPERTIES_CONTROLLER = "controller";
+    public final static String THING_PROPERTIES_ZONE = "zone";
 }

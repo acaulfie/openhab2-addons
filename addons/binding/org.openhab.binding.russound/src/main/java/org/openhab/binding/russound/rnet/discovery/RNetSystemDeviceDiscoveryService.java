@@ -8,9 +8,11 @@
  */
 package org.openhab.binding.russound.rnet.discovery;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
 import org.openhab.binding.russound.rnet.handler.RNetSystemHandler;
 import org.openhab.binding.russound.rnet.internal.RNetConstants;
@@ -42,12 +44,16 @@ public class RNetSystemDeviceDiscoveryService extends AbstractDiscoveryService {
                 // let's request zone info for each combination. If we receive a valid return message, let's add the
                 // device(s)
                 logger.debug("create a zone with controller id: {}, zone id: {}", controllerNumber, zoneNumber);
-                ThingTypeUID thingTypeUID = RNetConstants.THING_TYPE_RNET_ZONE;
+                Map<String, Object> properties = new HashMap<>();
+                properties.put(RNetConstants.THING_PROPERTIES_CONTROLLER, controllerNumber);
+                properties.put(RNetConstants.THING_PROPERTIES_ZONE, zoneNumber);
+
                 String id = String.format("%d_%d", controllerNumber, zoneNumber);
                 String name = String.format("RNet Audio Zone (%s)", id);
-                thingDiscovered(DiscoveryResultBuilder.create(new ThingUID(thingTypeUID, id))
-                        .withBridge(sysHandler.getThing().getUID()).withLabel(name)
-                        .withProperty("controller", controllerNumber).withProperty("zone", zoneNumber).build());
+                ThingUID thingUID = new ThingUID(RNetConstants.THING_TYPE_RNET_ZONE, id,
+                        sysHandler.getThing().getUID().getId());
+                thingDiscovered(DiscoveryResultBuilder.create(thingUID).withBridge(sysHandler.getThing().getUID())
+                        .withLabel(name).withProperties(properties).build());
 
             }
         }
