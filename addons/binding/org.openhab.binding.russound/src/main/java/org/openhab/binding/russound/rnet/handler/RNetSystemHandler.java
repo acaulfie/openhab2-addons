@@ -8,7 +8,6 @@
  */
 package org.openhab.binding.russound.rnet.handler;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -66,7 +65,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
      * The configuration for the system - will be recreated when the configuration changes and will be null when not
      * online
      */
-    private RNetSystemConfig config;
+    // private RNetSystemConfig config;
     /**
      * These bus parser are responsible for examining a message and letting us know if they denote a BusAction
      */
@@ -117,6 +116,14 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         busParsers.add(new PowerChangeParser());
         busParsers.add(new SourceChangeParser());
         busParsers.add(new ZoneInfoParser());
+
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.BRIDGE_OFFLINE, "Disconnecting from Russound System");
+        disconnect();
     }
 
     @Override
@@ -125,19 +132,20 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         if (command instanceof RefreshType) {
             return;
         }
+
+        // for all on/off zone is irrelevant, however to keep api same will just pass in a 'dummy' ref
+        ZoneId dummyZone = new ZoneId(0, 0);
         switch (channelUID.getId()) {
             case RNetConstants.CHANNEL_SYSALLON:
                 if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
-                    sendCommand(
-                            RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x01));
+                    sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, dummyZone, (byte) 0x01));
                 } else {
                     logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
                 }
                 break;
             case RNetConstants.CHANNEL_SYSALLOFF:
                 if (command instanceof OnOffType && OnOffType.ON.equals(command)) {
-                    sendCommand(
-                            RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, new ZoneId(0, 0), (byte) 0x00));
+                    sendCommand(RNetProtocolCommands.getCommand(ZoneCommand.ALLONOFF_SET, dummyZone, (byte) 0x00));
                 } else {
                     logger.debug("Received a ZONE STATUS channel command with a non OnOffType: {}", command);
                 }
@@ -164,9 +172,21 @@ public class RNetSystemHandler extends BaseBridgeHandler {
             return;
         }
 
-        sessionLock.lock();
-        RNetInputStreamParser streamParser = new RNetInputStreamParser(new InputHander() {
+        initiateConnection(rnetConfig);
 
+        // Try initial connection in a scheduled task
+        this.scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                connect();
+            }
+
+        }, 10, TimeUnit.MILLISECONDS);
+    }
+
+    private void initiateConnection(final RNetSystemConfig rnetConfig) {
+
+        RNetInputStreamParser streamParser = new RNetInputStreamParser(new InputHander() {
             @Override
             public void handle(Byte[] bytes) {
                 for (BusParser parser : busParsers) {
@@ -193,6 +213,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         }
 
         try {
+            sessionLock.lock();
             session = new DeviceConnection(connectionProvider, streamParser);
             session.setConnectionStateListener(new ConnectionStateListener() {
 
@@ -209,15 +230,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         } finally {
             sessionLock.unlock();
         }
-
-        // Try initial connection in a scheduled task
-        this.scheduler.schedule(new Runnable() {
-            @Override
-            public void run() {
-                connect();
-            }
-
-        }, 10, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -230,7 +242,6 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         pingLock.lock();
         try {
             session.connect();
-
         } catch (Exception e) {
             logger.error("Error connecting: {}", e.getMessage(), e);
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, response);
@@ -298,6 +309,7 @@ public class RNetSystemHandler extends BaseBridgeHandler {
         sessionLock.lock();
         try {
             session.disconnect();
+            session = null;
         } finally {
             sessionLock.unlock();
         }
@@ -316,26 +328,11 @@ public class RNetSystemHandler extends BaseBridgeHandler {
 
             if (sysConfig == null) {
                 updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Configuration file missing");
-            } else {
-                config = sysConfig;
             }
-            return config;
+            return sysConfig;
         } finally {
             configLock.unlock();
         }
-    }
-
-    private ZoneId zoneIdFromThing(Thing childThing) {
-        if (!childThing.getConfiguration().getProperties().containsKey("controller")) {
-            throw new IllegalArgumentException("childThing does not have required 'controller' property");
-        }
-        if (!childThing.getConfiguration().getProperties().containsKey("zone")) {
-            throw new IllegalArgumentException("childThing does not have required 'zone' property");
-        }
-        int zone = ((BigDecimal) childThing.getConfiguration().getProperties().get("zone")).intValue();
-        int controller = ((BigDecimal) childThing.getConfiguration().getProperties().get("controller")).intValue();
-        return new ZoneId(controller, zone);
-
     }
 
     public void sendCommand(Byte[] command) {
