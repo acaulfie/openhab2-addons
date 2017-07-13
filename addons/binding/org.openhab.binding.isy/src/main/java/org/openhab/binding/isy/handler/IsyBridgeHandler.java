@@ -79,17 +79,17 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
                     @Override
                     public void onDeviceOnLine() {
-                        updateStatus(ThingStatus.ONLINE);
+                        logger.debug("Received onDeviceOnLine message");
 
                     }
 
                     @Override
                     public void onDeviceOffLine() {
-                        updateStatus(ThingStatus.OFFLINE);
+                        logger.debug("Received onDeviceOffLine message");
 
                     }
                 });
-
+        updateStatus(ThingStatus.ONLINE);
     }
 
     public void registerDiscoveryService(DiscoveryService isyBridgeDiscoveryService) {
