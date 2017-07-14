@@ -139,7 +139,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
     }
 
     private static String removeInvalidUidChars(String original) {
-        return original.replace(" ", "_");
+        return original.replace(" ", "_").replace(":", "");
     }
 
     private void discoverScenes() {
