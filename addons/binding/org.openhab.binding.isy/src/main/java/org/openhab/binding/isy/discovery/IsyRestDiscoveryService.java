@@ -154,6 +154,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
 
             ThingTypeUID theThingTypeUid = IsyBindingConstants.SCENE_THING_TYPE;
             String thingID = removeInvalidUidChars(scene.address);
+            logger.debug("scene address: {}", thingID);
             ThingUID thingUID = new ThingUID(theThingTypeUid, bridgeUID, thingID);
             DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID).withBridge(bridgeUID)
                     .withProperties(properties).withBridge(bridgeUID).withLabel(scene.name).build();

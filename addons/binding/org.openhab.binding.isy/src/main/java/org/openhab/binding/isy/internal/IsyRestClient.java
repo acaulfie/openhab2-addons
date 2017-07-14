@@ -283,15 +283,15 @@ public class IsyRestClient implements OHIsyClient {
     @Override
     public List<Scene> getScenes() {
         List<Scene> returnValue = new ArrayList<Scene>();
-        String variables = scenesTarget.request().header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue)
+        String scenesXml = scenesTarget.request().header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue)
                 .accept(MediaType.TEXT_XML).get(String.class);
-        System.out.println("scenes xml: " + variables);
+        logger.debug("scenes xml: {}", scenesXml);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);
         DocumentBuilder builder;
         try {
             builder = domFactory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(variables)));
+            Document document = builder.parse(new InputSource(new StringReader(scenesXml)));
 
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
