@@ -296,7 +296,7 @@ public class IsyRestClient implements OHIsyClient {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
 
-            XPathExpression expr = xpath.compile("//group[@flag=132]");
+            XPathExpression expr = xpath.compile("//group[@flag=132] or //group[@flag=4]");
             NodeList list = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
             logger.debug("Number scenes found from rest call: " + list.getLength());
             for (int i = 0; i < list.getLength(); i++) {
