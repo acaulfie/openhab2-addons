@@ -150,8 +150,9 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
             logger.debug("discovered scene: " + scene);
             properties = new HashMap<>(0);
             properties.put(IsyInsteonDeviceConfiguration.ADDRESS, scene.address);
+            logger.debug("scene address: {}", scene.address);
             properties.put(IsyInsteonDeviceConfiguration.NAME, scene.name);
-
+            logger.debug("scene name: {}", scene.name);
             ThingTypeUID theThingTypeUid = IsyBindingConstants.SCENE_THING_TYPE;
             String thingID = removeInvalidUidChars(scene.address);
             logger.debug("scene address: {}", thingID);
