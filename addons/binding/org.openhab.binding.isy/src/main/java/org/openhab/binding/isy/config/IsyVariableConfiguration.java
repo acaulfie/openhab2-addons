@@ -5,7 +5,7 @@ public class IsyVariableConfiguration {
     public static final String ID = "id";
     public static final String TYPE = "type";
 
-    public String id;
-    public String type;
+    public int id;
+    public int type;
 
 }

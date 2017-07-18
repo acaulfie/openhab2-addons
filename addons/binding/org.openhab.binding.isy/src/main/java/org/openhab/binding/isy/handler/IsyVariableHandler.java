@@ -8,10 +8,12 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.isy.IsyBindingConstants;
 import org.openhab.binding.isy.config.IsyVariableConfiguration;
+import org.openhab.binding.isy.internal.VariableType;
+import org.openhab.binding.isy.internal.protocol.VariableEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class IsyVariableHandler extends AbtractIsyThingHandler implements IsyThingHandler {
+public class IsyVariableHandler extends AbtractIsyThingHandler {
     private static final Logger logger = LoggerFactory.getLogger(IsyVariableHandler.class);
 
     public IsyVariableHandler(Thing thing) {
@@ -20,14 +22,16 @@ public class IsyVariableHandler extends AbtractIsyThingHandler implements IsyThi
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        // TODO implement
         if (RefreshType.REFRESH.equals(command)) {
-            logger.debug("Must implement refresh for variables");
+            IsyVariableConfiguration var_config = getThing().getConfiguration().as(IsyVariableConfiguration.class);
+            VariableEvent currentValue = getBridgeHandler().getInsteonClient()
+                    .getVariableValue(VariableType.fromInt(var_config.type), var_config.id);
+            handleUpdate(currentValue.getVal());
         } else {
             if (command instanceof DecimalType) {
                 IsyVariableConfiguration var_config = getThing().getConfiguration().as(IsyVariableConfiguration.class);
-                getBridgeHandler().getInsteonClient().changeVariableState(var_config.type, var_config.id,
-                        ((DecimalType) command).intValue());
+                getBridgeHandler().getInsteonClient().changeVariableState(VariableType.fromInt(var_config.type),
+                        var_config.id, ((DecimalType) command).intValue());
             } else {
                 logger.warn("Unsupported command for variable handleCommand: " + command.toFullString());
             }
@@ -35,11 +39,8 @@ public class IsyVariableHandler extends AbtractIsyThingHandler implements IsyThi
 
     }
 
-    @Override
-    public void handleUpdate(String control, String action, String node) {
-        String[] updateInfo = (node).split(" ");
-        // logger.warn("Unhandled update");
-        updateState(IsyBindingConstants.CHANNEL_VARIABLE_VALUE, new DecimalType(updateInfo[2]));
+    public void handleUpdate(int value) {
+        updateState(IsyBindingConstants.CHANNEL_VARIABLE_VALUE, new DecimalType(value));
     }
 
     @Override

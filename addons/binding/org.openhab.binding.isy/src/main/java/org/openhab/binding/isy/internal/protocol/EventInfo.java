@@ -13,6 +13,8 @@ public class EventInfo {
 
     @XStreamAlias("ze")
     private ZoneEvent zoneEvent;
+    @XStreamAlias("var")
+    private VariableEvent variableEvent;
 
     public AreaEvent getAreaEvent() {
         return areaEvent;
@@ -28,6 +30,14 @@ public class EventInfo {
 
     public void setZoneEvent(ZoneEvent zoneEvent) {
         this.zoneEvent = zoneEvent;
+    }
+
+    public VariableEvent getVariableEvent() {
+        return variableEvent;
+    }
+
+    public void setVariableEvent(VariableEvent variableEvent) {
+        this.variableEvent = variableEvent;
     }
 
 }

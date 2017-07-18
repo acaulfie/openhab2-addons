@@ -1,5 +1,7 @@
 package org.openhab.binding.isy.handler;
 
+import java.math.BigDecimal;
+
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -16,10 +18,14 @@ import org.openhab.binding.isy.internal.IsyRestClient;
 import org.openhab.binding.isy.internal.IsyWebSocketSubscription;
 import org.openhab.binding.isy.internal.NodeAddress;
 import org.openhab.binding.isy.internal.OHIsyClient;
+import org.openhab.binding.isy.internal.VariableType;
 import org.openhab.binding.isy.internal.protocol.Event;
 import org.openhab.binding.isy.internal.protocol.EventInfo;
 import org.openhab.binding.isy.internal.protocol.Properties;
 import org.openhab.binding.isy.internal.protocol.Property;
+import org.openhab.binding.isy.internal.protocol.StateVariable;
+import org.openhab.binding.isy.internal.protocol.VariableEvent;
+import org.openhab.binding.isy.internal.protocol.VariableList;
 import org.openhab.binding.isy.internal.protocol.elk.AreaEvent;
 import org.openhab.binding.isy.internal.protocol.elk.ZoneEvent;
 import org.slf4j.Logger;
@@ -51,7 +57,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
         xStream.ignoreUnknownElements();
         xStream.setClassLoader(IsyRestDiscoveryService.class.getClassLoader());
         xStream.processAnnotations(new Class[] { Properties.class, Property.class, Event.class, EventInfo.class,
-                ZoneEvent.class, AreaEvent.class });
+                ZoneEvent.class, AreaEvent.class, VariableList.class, StateVariable.class, VariableEvent.class });
     }
 
     @Override
@@ -67,14 +73,14 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
         // TODO must shutdown event subscription, rest calling service, and the references for discovery
     }
 
-    private IsyVariableHandler getVariableHandler(String id) {
-        logger.debug("find thing handler for address: {}", id);
-        String[] idParts = id.split(" ");
+    private IsyVariableHandler getVariableHandler(VariableType type, int id) {
+        logger.debug("find thing handler for id: {}, type: {}", id, type.getType());
         for (Thing thing : getThing().getThings()) {
             if (IsyBindingConstants.VARIABLE_THING_TYPE.equals(thing.getThingTypeUID())) {
-                String theId = (String) thing.getConfiguration().get("id");
-                String theType = (String) thing.getConfiguration().get("type");
-                if (theType.equals(idParts[0]) && theId.equals(idParts[1])) {
+                int theId = ((BigDecimal) thing.getConfiguration().get("id")).intValue();
+                int theType = ((BigDecimal) thing.getConfiguration().get("type")).intValue();
+                logger.trace("checking thing to see if match, id: {} , type: {}", theId, theType);
+                if (theType == type.getType() && theId == id) {
                     return (IsyVariableHandler) thing.getHandler();
                 }
             }
@@ -95,15 +101,15 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                 new ISYModelChangeListener() {
 
                     @Override
-                    public void onModelChanged(String control, String action, String node) {
-                        IsyThingHandler handler = null;
-                        if ("_1".equals(control) && "6".equals(action)) {
-                            handler = getVariableHandler(node);
-                        } else if (!"".equals(node)) {
-                            handler = getThingHandler(node);
+                    public void onModelChanged(Event event) {
+                        logger.debug("onModelChanged called, control: {}, action: {}, var event: {}",
+                                event.getControl(), event.getAction(), event.getEventInfo().getVariableEvent());
+                        IsyDeviceHandler handler = null;
+                        if (!"".equals(event.getNode())) {
+                            handler = getThingHandler(event.getNode());
                         }
                         if (handler != null) {
-                            handler.handleUpdate(control, action, node);
+                            handler.handleUpdate(event.getControl(), event.getAction(), event.getNode());
                         }
                     }
 
@@ -117,6 +123,15 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                     public void onDeviceOffLine() {
                         logger.debug("Received onDeviceOffLine message");
                         updateStatus(ThingStatus.OFFLINE);
+                    }
+
+                    @Override
+                    public void onVariableChanged(VariableEvent event) {
+                        logger.debug("need to find variable handler, id is: {}, val: {}", event.getId(),
+                                event.getVal());
+                        IsyVariableHandler handler = getVariableHandler(VariableType.fromInt(event.getType()),
+                                event.getId());
+                        handler.handleUpdate(event.getVal());
                     }
 
                 }, xStream);
@@ -136,7 +151,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     }
 
-    private IsyThingHandler getThingHandler(String address) {
+    private IsyDeviceHandler getThingHandler(String address) {
         logger.trace("find thing handler for address: {}", address);
         if (!address.startsWith("n")) {
             String addressNoDeviceId = NodeAddress.stripDeviceId(address);

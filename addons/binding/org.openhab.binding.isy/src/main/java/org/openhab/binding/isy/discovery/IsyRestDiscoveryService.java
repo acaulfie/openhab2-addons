@@ -19,7 +19,8 @@ import org.openhab.binding.isy.internal.NodeAddress;
 import org.openhab.binding.isy.internal.OHIsyClient;
 import org.openhab.binding.isy.internal.Program;
 import org.openhab.binding.isy.internal.Scene;
-import org.openhab.binding.isy.internal.Variable;
+import org.openhab.binding.isy.internal.VariableType;
+import org.openhab.binding.isy.internal.protocol.StateVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,31 +171,27 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
     }
 
     private void discoverVariables() {
+        discoverVariablesForType(VariableType.INTEGER);
+        discoverVariablesForType(VariableType.STATE);
+    }
+
+    private void discoverVariablesForType(VariableType variableType) {
         OHIsyClient insteon = this.bridgeHandler.getInsteonClient();
         Map<String, Object> properties = null;
         ThingUID bridgeUID = this.bridgeHandler.getThing().getUID();
-        for (Variable variable : insteon.getVariables()) {
-            logger.debug("discovered program: " + variable);
+        for (StateVariable variable : insteon.getVariableDefinitions(variableType).getStateVariables()) {
+            logger.debug("discovered variable, id:{}, name: {} ", variable.getId(), variable.getName());
             properties = new HashMap<>(0);
-            properties.put(IsyVariableConfiguration.ID, variable.id);
-            properties.put(IsyVariableConfiguration.TYPE, variable.type);
+            properties.put(IsyVariableConfiguration.ID, variable.getId());
+            properties.put(IsyVariableConfiguration.TYPE, variableType.getType());
 
-            String typeAsText;
-            if ("1".equals(variable.type)) {
-                typeAsText = "integer";
-            } else if ("2".equals(variable.type)) {
-                typeAsText = "state";
-            } else {
-                throw new IllegalStateException("Invalid type for variable:" + variable.type);
-            }
-            String variableName = "var_" + typeAsText + "_" + variable.id;
-            properties.put(IsyInsteonDeviceConfiguration.NAME, variableName);
+            String typeAsText = variableType.equals(VariableType.INTEGER) ? "integer" : "state";
 
             ThingTypeUID theThingTypeUid = IsyBindingConstants.VARIABLE_THING_TYPE;
-            String thingID = variable.type + "_" + variable.id;
+            String thingID = typeAsText + "_" + variable.getId();
             ThingUID thingUID = new ThingUID(theThingTypeUid, bridgeUID, thingID);
             DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID).withBridge(bridgeUID)
-                    .withProperties(properties).withBridge(bridgeUID).withLabel(variableName).build();
+                    .withProperties(properties).withBridge(bridgeUID).withLabel(variable.getName()).build();
             thingDiscovered(discoveryResult);
         }
     }

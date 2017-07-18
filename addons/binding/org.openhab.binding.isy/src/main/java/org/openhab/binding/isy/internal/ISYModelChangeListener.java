@@ -8,12 +8,17 @@
  */
 package org.openhab.binding.isy.internal;
 
+import org.openhab.binding.isy.internal.protocol.Event;
+import org.openhab.binding.isy.internal.protocol.VariableEvent;
+
 /**
  * @author Craig Hamilton
  *
  */
 public interface ISYModelChangeListener {
-    public void onModelChanged(final String control, final String action, final String node);
+    public void onModelChanged(Event event);
+
+    public void onVariableChanged(VariableEvent event);
 
     public void onDeviceOnLine();
 

@@ -116,8 +116,10 @@ public class IsyWebSocketSubscription {
                     event.getAction());
             if (!event.getControl().startsWith("_")) {
                 if (listener != null) {
-                    listener.onModelChanged(event.getControl(), event.getAction(), event.getNode());
+                    listener.onModelChanged(event);
                 }
+            } else if ("_1".equals(event.getControl()) && "6".equals(event.getAction())) {
+                listener.onVariableChanged(event.getEventInfo().getVariableEvent());
             }
         }
 

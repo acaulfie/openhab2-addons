@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openhab.binding.isy.internal.protocol.Property;
+import org.openhab.binding.isy.internal.protocol.VariableEvent;
+import org.openhab.binding.isy.internal.protocol.VariableList;
 
 public interface OHIsyClient {
     // public void connect();
@@ -12,7 +14,7 @@ public interface OHIsyClient {
 
     public boolean changeNodeState(String command, String value, String address);
 
-    public boolean changeVariableState(String type, String id, int value);
+    public boolean changeVariableState(VariableType type, int id, int value);
 
     public boolean changeSceneState(String address, int value);
 
@@ -22,10 +24,12 @@ public interface OHIsyClient {
 
     public Collection<Program> getPrograms();
 
-    public List<Variable> getVariables();
+    public VariableList getVariableDefinitions(VariableType type);
 
     public List<Scene> getScenes();
 
     public Property getNodeStatus(String node);
+
+    public VariableEvent getVariableValue(VariableType type, int id);
 
 }

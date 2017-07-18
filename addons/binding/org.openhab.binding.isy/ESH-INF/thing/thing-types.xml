@@ -75,17 +75,13 @@
             <channel id="value" typeId="variable_value" />
         </channels>
         <config-description>
-            <parameter name="id" type="text" required="true">
+            <parameter name="id" type="integer" required="true">
                 <label>Variable Id</label>
                 <description>Variable's Id.</description>
             </parameter>
-            <parameter name="type" type="text" required="true">
-                <label>Type (Integer or State)</label>
+            <parameter name="type" type="integer" required="true">
+                <label>Type (Integer(1) or State(2))</label>
                 <description>Variable's Type.</description>
-            </parameter>
-            <parameter name="name" type="text" required="true">
-                <label>Name</label>
-                <description>Text description of variable.</description>
             </parameter>
         </config-description>
     </thing-type>

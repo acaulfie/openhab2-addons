@@ -60,7 +60,6 @@ public class IsyDeviceHandler extends AbtractIsyThingHandler {
         return returnValue.toString();
     }
 
-    @Override
     public void handleUpdate(String control, String action, String node) {
         logger.debug("handleUpdate called, control: {} , action: {} , node:{}", control, action, node);
 

@@ -23,6 +23,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.openhab.binding.isy.internal.protocol.Properties;
 import org.openhab.binding.isy.internal.protocol.Property;
+import org.openhab.binding.isy.internal.protocol.StateVariable;
+import org.openhab.binding.isy.internal.protocol.VariableEvent;
+import org.openhab.binding.isy.internal.protocol.VariableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -39,6 +42,7 @@ public class IsyRestClient implements OHIsyClient {
     public static final String PROGRAMS = "programs";
     public static final String VARIABLES_SET = "vars/set";
     public static final String VARIABLES = "vars/get";
+    public static final String VARIABLES_DEFINITIONS = "vars/definitions";
     public static final String SCENES = "scenes";
     public static final String STATUS = "status";
     public static final String VAR_INTEGER_TYPE = "1";
@@ -54,8 +58,9 @@ public class IsyRestClient implements OHIsyClient {
     protected WebTarget programsTarget;
     protected WebTarget scenesTarget;
     protected WebTarget statusTarget;
-    protected WebTarget integerVariablesTarget;
+    protected WebTarget variablesTarget;
     protected WebTarget stateVariablesTarget;
+    protected WebTarget stateVariablesDefinitionsTarget;
     private XStream xStream;
 
     // TODO should support startup, shutdown lifecycle
@@ -63,14 +68,15 @@ public class IsyRestClient implements OHIsyClient {
 
         authorizationHeaderValue = authHeader;
         this.isyClient = ClientBuilder.newClient();
-        this.isyClient.register(Variable.class);
+        // this.isyClient.register(Variable.class);
         this.isyTarget = isyClient.target("http://" + url + "/rest");
         this.nodesTarget = isyTarget.path(NODES);// .register(NodeResponseInterceptor.class);
         this.programsTarget = isyTarget.path(PROGRAMS);
         this.scenesTarget = nodesTarget.path(SCENES);
         this.statusTarget = isyTarget.path(STATUS);
-        this.integerVariablesTarget = isyTarget.path(VARIABLES).path(VAR_INTEGER_TYPE);
+        this.variablesTarget = isyTarget.path(VARIABLES);
         this.stateVariablesTarget = isyTarget.path(VARIABLES).path(VAR_STATE_TYPE);
+        this.stateVariablesDefinitionsTarget = isyTarget.path(VARIABLES_DEFINITIONS);
         this.xStream = xStream;
     }
 
@@ -230,75 +236,6 @@ public class IsyRestClient implements OHIsyClient {
         return name;
     }
 
-    @Override
-    public List<Variable> getVariables() {
-        // stateVariablesTarget
-
-        List<Variable> integerVariables = getVariables(integerVariablesTarget);
-        List<Variable> stateVariables = getVariables(stateVariablesTarget);
-        String variables = integerVariablesTarget.request().header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue)
-                .accept(MediaType.TEXT_XML).get(String.class);
-        logger.debug("variables string is: " + variables);
-
-        List<Variable> returnValue = new ArrayList<Variable>();
-        returnValue.addAll(integerVariables);
-        returnValue.addAll(stateVariables);
-        return returnValue;
-    }
-
-    private List<Variable> getVariables(WebTarget target) {
-        List<Variable> returnValue = new ArrayList<Variable>();
-        String variables = target.request().header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue)
-                .accept(MediaType.TEXT_XML).get(String.class);
-        System.out.println("variables xml: " + variables);
-        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-        domFactory.setNamespaceAware(true);
-        DocumentBuilder builder;
-        try {
-            builder = domFactory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(variables)));
-
-            XPathFactory factory = XPathFactory.newInstance();
-            XPath xpath = factory.newXPath();
-
-            XPathExpression expr = xpath.compile("//var");
-            NodeList list = (NodeList) expr.evaluate(document, XPathConstants.NODESET);
-            for (int i = 0; i < list.getLength(); i++) {
-                org.w3c.dom.Node node = list.item(i);
-
-                if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    Element firstElement = (Element) node;
-                    String id = firstElement.getAttribute("id");
-                    String type = firstElement.getAttribute("type");
-                    System.out.println("id (el) :" + id);
-                    System.out.println("type (el) :" + type);
-                    NodeList firstNameList = firstElement.getElementsByTagName("val");
-                    Element firstNameElement = (Element) firstNameList.item(0);
-                    NodeList textFNList = firstNameElement.getChildNodes();
-                    int value = Integer.parseInt(textFNList.item(0).getNodeValue().trim());
-                    System.out.println("value : " + value);
-                    returnValue.add(new Variable(id, type, value));
-                }
-
-                System.out.println(node.getTextContent());
-            }
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SAXException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return returnValue;
-    }
-
     private static String removeBadChars(String text) {
         return text.replace("(", "").replace(")", "").replace("-", "_");
     }
@@ -352,13 +289,6 @@ public class IsyRestClient implements OHIsyClient {
         return returnValue;
     }
 
-    private Variable testGetIntVar(String variableId) {
-        return integerVariablesTarget.path(variableId).request()
-                .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue).accept(MediaType.APPLICATION_XML)
-                .get(Variable.class);
-
-    }
-
     private void dumpNodes() {
         String nodes = testGetString(nodesTarget);
     }
@@ -385,17 +315,16 @@ public class IsyRestClient implements OHIsyClient {
         // List<Program> returnValue = getPrograms("0045");
         // System.out.println("text value: " + returnValue);
 
-        System.out.println("vars text value: " + testGetString(integerVariablesTarget.path("1")));
-        Variable vars = testGetIntVar("1");
-        System.out.println("text value: " + vars);
+        // System.out.println("vars text value: " + testGetString(integerVariablesTarget.path("1")));
 
         System.out.println("Dumping status");
         dumpStatus();
     }
 
     @Override
-    public boolean changeVariableState(String type, String id, int value) {
-        Response result = isyTarget.path(VARIABLES_SET).path(type).path(id).path(Integer.toString(value)).request()
+    public boolean changeVariableState(VariableType type, int id, int value) {
+        Response result = isyTarget.path(VARIABLES_SET).path(Integer.toString(type.getType()))
+                .path(Integer.toString(id)).path(Integer.toString(value)).request()
                 .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue).get();
         // TODO implement return value
         return result.getStatus() == 200;
@@ -417,6 +346,35 @@ public class IsyRestClient implements OHIsyClient {
             return result.getStatus() == 200;
         }
         return false;
+    }
+
+    @Override
+    public VariableList getVariableDefinitions(VariableType type) {
+        String message = stateVariablesDefinitionsTarget.path(Integer.toString(type.getType())).request()
+                .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue).accept(MediaType.TEXT_XML).get(String.class);
+        logger.trace("theResult is: {}", message);
+
+        Object objResult = xStream.fromXML(message);
+        if (objResult instanceof VariableList) {
+            for (StateVariable variable : ((VariableList) objResult).getStateVariables()) {
+                logger.debug("[variable] id: {}, name: {}", variable.getId(), variable.getName());
+
+            }
+        }
+        return (VariableList) objResult;
+    }
+
+    @Override
+    public VariableEvent getVariableValue(VariableType type, int id) {
+        String message = variablesTarget.path(Integer.toString(type.getType())).path(Integer.toString(id)).request()
+                .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue).accept(MediaType.TEXT_XML).get(String.class);
+        logger.trace("retrieving value for variable, type: {}, id: {}, message returned: {}", type.getType(), id,
+                message);
+        Object obj = xStream.fromXML(message);
+        return ((VariableEvent) obj);
+        // logger.debug("returned obj was: {}", obj);
+        // throw new IllegalArgumentException(
+        // "Could not retrieve value for variable type: " + type.getType() + ", id: " + id);
     }
 
 }
