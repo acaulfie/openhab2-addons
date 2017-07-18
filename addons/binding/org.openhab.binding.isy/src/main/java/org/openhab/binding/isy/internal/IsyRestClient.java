@@ -21,6 +21,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.openhab.binding.isy.internal.protocol.Properties;
+import org.openhab.binding.isy.internal.protocol.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -28,6 +30,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.thoughtworks.xstream.XStream;
 
 public class IsyRestClient implements OHIsyClient {
     private Logger logger = LoggerFactory.getLogger(IsyRestClient.class);
@@ -52,14 +56,12 @@ public class IsyRestClient implements OHIsyClient {
     protected WebTarget statusTarget;
     protected WebTarget integerVariablesTarget;
     protected WebTarget stateVariablesTarget;
-    private IsyWebSocketSubscription isySubscription;
+    private XStream xStream;
 
     // TODO should support startup, shutdown lifecycle
-    public IsyRestClient(String url, String userName, String password, ISYModelChangeListener listener) {
-        String usernameAndPassword = userName + ":" + password;
-        this.authorizationHeaderValue = "Basic "
-                + java.util.Base64.getEncoder().encodeToString(usernameAndPassword.getBytes());
+    public IsyRestClient(String url, String authHeader, XStream xStream) {
 
+        authorizationHeaderValue = authHeader;
         this.isyClient = ClientBuilder.newClient();
         this.isyClient.register(Variable.class);
         this.isyTarget = isyClient.target("http://" + url + "/rest");
@@ -69,7 +71,7 @@ public class IsyRestClient implements OHIsyClient {
         this.statusTarget = isyTarget.path(STATUS);
         this.integerVariablesTarget = isyTarget.path(VARIABLES).path(VAR_INTEGER_TYPE);
         this.stateVariablesTarget = isyTarget.path(VARIABLES).path(VAR_STATE_TYPE);
-        isySubscription = new IsyWebSocketSubscription(url, authorizationHeaderValue, listener);
+        this.xStream = xStream;
     }
 
     @Override
@@ -78,6 +80,27 @@ public class IsyRestClient implements OHIsyClient {
                 .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue);
         Response result = changeNodeTarget.get();
         return result.getStatus() == 200;
+    }
+
+    @Override
+    public Property getNodeStatus(String node) {
+        WebTarget target = statusTarget.path(node);
+        logger.trace("getNodeStatus url: {}", target.getUri().toString());
+        String theResult = target.request().header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue)
+                .accept(MediaType.TEXT_XML).get(String.class);
+        logger.trace("theResult is: {}", theResult);
+
+        Object objResult = xStream.fromXML(theResult);
+        if (objResult instanceof Properties) {
+            for (Property property : ((Properties) objResult).getProperties()) {
+                logger.debug("[property] id: {}, value: {}", property.id, property.value);
+                if ("ST".equals(property.id)) {
+                    return property;
+                }
+
+            }
+        }
+        return null;
     }
 
     @Override
@@ -368,12 +391,6 @@ public class IsyRestClient implements OHIsyClient {
 
         System.out.println("Dumping status");
         dumpStatus();
-    }
-
-    public static void main(String[] args) {
-        IsyRestClient test = new IsyRestClient("192.168.0.211", args[0], args[1], null);
-        test.doTests();
-
     }
 
     @Override

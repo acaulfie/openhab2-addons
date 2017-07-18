@@ -9,7 +9,7 @@
 package org.openhab.binding.isy.internal;
 
 /**
- * @author Tim Diekmann
+ * @author Craig Hamilton
  *
  */
 public interface ISYModelChangeListener {

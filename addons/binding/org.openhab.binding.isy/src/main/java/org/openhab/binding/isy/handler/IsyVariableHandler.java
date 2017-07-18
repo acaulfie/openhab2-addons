@@ -36,8 +36,8 @@ public class IsyVariableHandler extends AbtractIsyThingHandler implements IsyThi
     }
 
     @Override
-    public void handleUpdate(Object... parameters) {
-        String[] updateInfo = ((String) parameters[2]).split(" ");
+    public void handleUpdate(String control, String action, String node) {
+        String[] updateInfo = (node).split(" ");
         // logger.warn("Unhandled update");
         updateState(IsyBindingConstants.CHANNEL_VARIABLE_VALUE, new DecimalType(updateInfo[2]));
     }

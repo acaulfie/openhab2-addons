@@ -37,7 +37,7 @@ public class SceneHandler extends AbtractIsyThingHandler {
     }
 
     @Override
-    public void handleUpdate(Object... parameters) {
+    public void handleUpdate(String control, String action, String node) {
         logger.warn("Not expecting to get updates for scenes");
 
     }

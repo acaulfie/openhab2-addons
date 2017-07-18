@@ -5,7 +5,6 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.isy.config.IsyProgramConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,21 +18,18 @@ public class IsyProgramHandler extends AbtractIsyThingHandler implements IsyThin
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        if (RefreshType.REFRESH.equals(command)) {
-            logger.debug("Refresh not implemented for programs");
+
+        if (command instanceof OnOffType) {
+            IsyProgramConfiguration var_config = getThing().getConfiguration().as(IsyProgramConfiguration.class);
+            getBridgeHandler().getInsteonClient().changeProgramState(var_config.id, channelUID.getId());
         } else {
-            if (command instanceof OnOffType) {
-                IsyProgramConfiguration var_config = getThing().getConfiguration().as(IsyProgramConfiguration.class);
-                getBridgeHandler().getInsteonClient().changeProgramState(var_config.id, channelUID.getId());
-            } else {
-                logger.warn("Unsupported command for variable handleCommand: " + command.toFullString());
-            }
+            logger.warn("Unsupported command for variable handleCommand: " + command.toFullString());
         }
 
     }
 
     @Override
-    public void handleUpdate(Object... parameters) {
+    public void handleUpdate(String control, String action, String node) {
         // TODO Auto-generated method stub
         logger.warn("Must handle update for program");
     }

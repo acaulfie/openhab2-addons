@@ -3,7 +3,12 @@ package org.openhab.binding.isy.internal;
 import java.util.Collection;
 import java.util.List;
 
+import org.openhab.binding.isy.internal.protocol.Property;
+
 public interface OHIsyClient {
+    // public void connect();
+    //
+    // public void disconnect();
 
     public boolean changeNodeState(String command, String value, String address);
 
@@ -20,5 +25,7 @@ public interface OHIsyClient {
     public List<Variable> getVariables();
 
     public List<Scene> getScenes();
+
+    public Property getNodeStatus(String node);
 
 }

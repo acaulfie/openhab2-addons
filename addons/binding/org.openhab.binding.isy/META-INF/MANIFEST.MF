@@ -6,7 +6,8 @@ Bundle-Vendor: openHAB
 Bundle-Version: 2.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
- lib/guava-18.0.jar
+ lib/guava-18.0.jar,
+ lib/xstream-1.4.10.jar
 Import-Package: 
  javax.ws.rs.client,
  javax.ws.rs.core,
@@ -19,6 +20,10 @@ Import-Package:
  org.eclipse.jetty.io,
  org.eclipse.jetty.util,
  org.eclipse.jetty.util.component,
+ org.eclipse.jetty.websocket.api,
+ org.eclipse.jetty.websocket.api.annotations,
+ org.eclipse.jetty.websocket.client,
+ org.eclipse.jetty.websocket.common,
  org.eclipse.smarthome.config.core,
  org.eclipse.smarthome.config.discovery,
  org.eclipse.smarthome.core.library.types,
@@ -27,10 +32,6 @@ Import-Package:
  org.eclipse.smarthome.core.thing.binding.builder,
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
- org.eclipse.jetty.websocket.api,
- org.eclipse.jetty.websocket.api.annotations,
- org.eclipse.jetty.websocket.client,
- org.eclipse.jetty.websocket.common,
  org.hamcrest.core;resolution:=optional,
  org.junit;resolution:=optional,
  org.osgi.framework,

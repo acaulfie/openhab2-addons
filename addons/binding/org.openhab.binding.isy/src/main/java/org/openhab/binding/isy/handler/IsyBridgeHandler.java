@@ -9,23 +9,47 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.isy.IsyBindingConstants;
 import org.openhab.binding.isy.config.IsyBridgeConfiguration;
+import org.openhab.binding.isy.discovery.IsyRestDiscoveryService;
 import org.openhab.binding.isy.internal.ISYModelChangeListener;
 import org.openhab.binding.isy.internal.InsteonClientProvider;
 import org.openhab.binding.isy.internal.IsyRestClient;
+import org.openhab.binding.isy.internal.IsyWebSocketSubscription;
 import org.openhab.binding.isy.internal.NodeAddress;
 import org.openhab.binding.isy.internal.OHIsyClient;
+import org.openhab.binding.isy.internal.protocol.Event;
+import org.openhab.binding.isy.internal.protocol.EventInfo;
+import org.openhab.binding.isy.internal.protocol.Properties;
+import org.openhab.binding.isy.internal.protocol.Property;
+import org.openhab.binding.isy.internal.protocol.elk.AreaEvent;
+import org.openhab.binding.isy.internal.protocol.elk.ZoneEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClientProvider {
     private Logger logger = LoggerFactory.getLogger(IsyBridgeHandler.class);
 
     private DiscoveryService bridgeDiscoveryService;
 
-    private OHIsyClient isyClient;
+    private IsyRestClient isyClient;
+
+    private IsyWebSocketSubscription eventSubscriber;
+    /*
+     * Responsible for subscribing to isy for events
+     */
+
+    private XStream xStream;
 
     public IsyBridgeHandler(Bridge bridge) {
         super(bridge);
+
+        xStream = new XStream(new StaxDriver());
+        xStream.ignoreUnknownElements();
+        xStream.setClassLoader(IsyRestDiscoveryService.class.getClassLoader());
+        xStream.processAnnotations(new Class[] { Properties.class, Property.class, Event.class, EventInfo.class,
+                ZoneEvent.class, AreaEvent.class });
     }
 
     @Override
@@ -35,8 +59,10 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
         super.dispose();
+        eventSubscriber.disconnect();
+        eventSubscriber = null;
+        // TODO must shutdown event subscription, rest calling service, and the references for discovery
     }
 
     private IsyVariableHandler getVariableHandler(String id) {
@@ -56,11 +82,14 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     @Override
     public void initialize() {
-        // super.initialize();
         logger.debug("initialize called for bridge handler");
         IsyBridgeConfiguration config = getThing().getConfiguration().as(IsyBridgeConfiguration.class);
 
-        isyClient = new IsyRestClient(config.getIpAddress(), config.getUser(), config.getPassword(),
+        String usernameAndPassword = config.getUser() + ":" + config.getPassword();
+        String authorizationHeaderValue = "Basic "
+                + java.util.Base64.getEncoder().encodeToString(usernameAndPassword.getBytes());
+
+        eventSubscriber = new IsyWebSocketSubscription(config.getIpAddress(), authorizationHeaderValue,
                 new ISYModelChangeListener() {
 
                     @Override
@@ -74,22 +103,25 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                         if (handler != null) {
                             handler.handleUpdate(control, action, node);
                         }
-
                     }
 
                     @Override
                     public void onDeviceOnLine() {
                         logger.debug("Received onDeviceOnLine message");
-
+                        updateStatus(ThingStatus.ONLINE);
                     }
 
                     @Override
                     public void onDeviceOffLine() {
                         logger.debug("Received onDeviceOffLine message");
-
+                        updateStatus(ThingStatus.OFFLINE);
                     }
-                });
+
+                }, xStream);
+        eventSubscriber.connect();
+        isyClient = new IsyRestClient(config.getIpAddress(), authorizationHeaderValue, xStream);
         updateStatus(ThingStatus.ONLINE);
+
     }
 
     public void registerDiscoveryService(DiscoveryService isyBridgeDiscoveryService) {
