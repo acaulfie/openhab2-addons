@@ -29,6 +29,8 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClientProvider {
+    private String testXmlVariableUpdate = "<?xml version=\"1.0\"?><Event seqnum=\"1607\" sid=\"uuid:74\"><control>_1</control><action>6</action><node></node><eventInfo><var type=\"2\" id=\"3\"><val>0</val><ts>20170718 09:16:26</ts></var></eventInfo></Event>";
+    private String testXmlNodeUpdate = "<?xml version=\"1.0\"?><Event seqnum=\"1602\" sid=\"uuid:74\"><control>ST</control><action>255</action><node>28 C1 F3 1</node><eventInfo></eventInfo></Event>";
     private Logger logger = LoggerFactory.getLogger(IsyBridgeHandler.class);
 
     private DiscoveryService bridgeDiscoveryService;
@@ -66,7 +68,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
     }
 
     private IsyVariableHandler getVariableHandler(String id) {
-        logger.debug("find thing handler for address: " + id);
+        logger.debug("find thing handler for address: {}", id);
         String[] idParts = id.split(" ");
         for (Thing thing : getThing().getThings()) {
             if (IsyBindingConstants.VARIABLE_THING_TYPE.equals(thing.getThingTypeUID())) {
@@ -135,28 +137,27 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
     }
 
     private IsyThingHandler getThingHandler(String address) {
-        logger.debug("find thing handler for address: " + address);
+        logger.trace("find thing handler for address: {}", address);
         if (!address.startsWith("n")) {
             String addressNoDeviceId = NodeAddress.stripDeviceId(address);
-            logger.debug("Find thing for address: " + addressNoDeviceId);
+            logger.trace("Find thing for address: {}", addressNoDeviceId);
             for (Thing thing : getThing().getThings()) {
                 if (!(IsyBindingConstants.PROGRAM_THING_TYPE.equals(thing.getThingTypeUID())
                         || IsyBindingConstants.VARIABLE_THING_TYPE.equals(thing.getThingTypeUID())
                         || IsyBindingConstants.SCENE_THING_TYPE.equals(thing.getThingTypeUID()))) {
 
                     String theAddress = (String) thing.getConfiguration().get("address");
-                    if (theAddress == null) {
-                        logger.debug("no address");
-                    }
-                    String thingsAddress = NodeAddress.stripDeviceId(theAddress);
-                    if (addressNoDeviceId.equals(thingsAddress)) {
-                        logger.debug("address: " + thingsAddress);
-                        return (IsyDeviceHandler) thing.getHandler();
+                    if (theAddress != null) {
+                        String thingsAddress = NodeAddress.stripDeviceId(theAddress);
+                        if (addressNoDeviceId.equals(thingsAddress)) {
+                            logger.trace("address: {}", thingsAddress);
+                            return (IsyDeviceHandler) thing.getHandler();
+                        }
                     }
                 }
             }
 
-            logger.debug("No thing discovered for address: " + address);
+            logger.debug("No thing discovered for address: {}", address);
         } else {
             logger.debug("Did not return thing handler because detected polygot node: {}", address);
         }
