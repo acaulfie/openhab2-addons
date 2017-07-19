@@ -24,7 +24,7 @@
 	</bridge-type>
 	<thing-type id="program">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>Program</label>
 		<description>Program</description>
@@ -47,7 +47,7 @@
 	</thing-type>
 	<thing-type id="scene">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Scene</label>
         <description>Scene</description>
@@ -67,7 +67,7 @@
     </thing-type>
     <thing-type id="variable">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Variable</label>
         <description>Isy Variable</description>
@@ -87,7 +87,7 @@
     </thing-type>
 	<thing-type id="motion">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>Motion Sensor</label>
 		<description>Motion Sensor</description>
@@ -117,7 +117,7 @@
 
 	<thing-type id="dimmer">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 
 		<label>Light Dimmer</label>
@@ -145,7 +145,7 @@
 	</thing-type>
 	<thing-type id="togglelinc">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Togglelinc</label>
         <description>Controls loads with On/Off switch</description>
@@ -170,7 +170,7 @@
     </thing-type>
 	<thing-type id="triggerlinc">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
 
         <label>Triggerlinc</label>
@@ -200,7 +200,7 @@
     </thing-type>
     <thing-type id="hiddendoorsensor">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
 
         <label>Hidden Door Sensor</label>
@@ -259,7 +259,7 @@
 	</thing-type>
 	<thing-type id="fanlinc">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Fanlinc</label>
         <description>Fanlinc</description>
@@ -285,7 +285,7 @@
     </thing-type>
 	<thing-type id="switch">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>Load Switch</label>
 		<description>Controls non-dimmable loads</description>
@@ -310,7 +310,7 @@
 	</thing-type>
 	<thing-type id="outletlinc">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Load Switch</label>
         <description>Controls dimmable loads</description>
@@ -334,7 +334,7 @@
     </thing-type>
     <thing-type id="dualoutletlinc">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Dual Outlook Linc</label>
         <description>Dual Outlook Linc</description>
@@ -359,7 +359,7 @@
     </thing-type>
 	<thing-type id="inlinelincswitch">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>Load Relay</label>
 		<description>Controls non-dimmable loads</description>
@@ -383,7 +383,7 @@
 	</thing-type>
 	<thing-type id="garage">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>Garage Door Control</label>
 		<description>Relay and Sensor to open/close garage doors.</description>
@@ -408,7 +408,7 @@
 	</thing-type>
 	<thing-type id="keypadlinc8">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>KeyPadLinc Dimmer 8</label>
         <description>KeyPadLinc Dimmer 8</description>
@@ -439,7 +439,7 @@
     </thing-type>
 	<thing-type id="keypadlinc6">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>KeyPadLinc Dimmer 6</label>
 		<description>KeyPadLinc Dimmer 6</description>
@@ -470,7 +470,7 @@
 	</thing-type>
 	<thing-type id="keypadlinc5">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>KeyPadLinc Dimmer 5</label>
 		<description>KeyPadLinc Dimmer 5</description>
@@ -499,7 +499,7 @@
 	</thing-type>
 	<thing-type id="remotelinc8">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="ipbridge" />
+			<bridge-type-ref id="isyBridge" />
 		</supported-bridge-type-refs>
 		<label>RemoteLinc 8</label>
 		<description>RemoteLinc 8</description>
@@ -530,7 +530,7 @@
 	</thing-type>
 	<thing-type id="unrecognized">
         <supported-bridge-type-refs>
-            <bridge-type-ref id="ipbridge" />
+            <bridge-type-ref id="isyBridge" />
         </supported-bridge-type-refs>
         <label>Unrecognized Device</label>
         <description>Unrecognized Device</description>
