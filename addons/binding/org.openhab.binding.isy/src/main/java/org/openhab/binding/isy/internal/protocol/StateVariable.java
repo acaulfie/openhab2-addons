@@ -7,16 +7,16 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class StateVariable {
 
     @XStreamAsAttribute
-    private String id;
+    private int id;
 
     @XStreamAsAttribute
     private String name;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
