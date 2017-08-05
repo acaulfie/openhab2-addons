@@ -15,7 +15,7 @@ env:
 build:
   ci:
     #Run test and code coverage and output results to the right folder
-    - mvn -f addons/binding/org.openhab.binding.isy/pom.xml -B install
+    - mvn -f addons/binding/org.openhab.binding.isy/pom.xml -Dreport.fail.on.error=false -B install
     - ls -al $SHIPPABLE_BUILD_DIR
   on_success:
     - aws s3 cp --debug $SHIPPABLE_BUILD_DIR/addons/binding/org.openhab.binding.isy/target/*.jar s3://craigham-pub/ --region "us-west-1"
