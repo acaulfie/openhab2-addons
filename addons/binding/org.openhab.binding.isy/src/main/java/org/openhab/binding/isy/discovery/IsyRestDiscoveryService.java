@@ -42,6 +42,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType = new HashMap<String, ThingTypeUID>();
         mMapDeviceTypeThingType.put("10.01", IsyBindingConstants.MOTION_THING_TYPE);
         mMapDeviceTypeThingType.put("01.20", IsyBindingConstants.DIMMER_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.24", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.2D", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.0E", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.01", IsyBindingConstants.DIMMER_THING_TYPE);
