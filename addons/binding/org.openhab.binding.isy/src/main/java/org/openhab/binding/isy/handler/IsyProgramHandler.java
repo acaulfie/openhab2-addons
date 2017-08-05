@@ -5,6 +5,8 @@ import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.UnDefType;
+import org.openhab.binding.isy.IsyBindingConstants;
 import org.openhab.binding.isy.config.IsyProgramConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +20,13 @@ public class IsyProgramHandler extends AbtractIsyThingHandler implements IsyThin
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-
+        IsyProgramConfiguration var_config = getThing().getConfiguration().as(IsyProgramConfiguration.class);
+        if (IsyBindingConstants.CHANNEL_PROGRAM_CONTROL.equals(channelUID.getId())) {
+            getBridgeHandler().getInsteonClient().changeProgramState(var_config.id, command.toString());
+            updateState(channelUID, UnDefType.UNDEF);
+            return;
+        }
         if (command instanceof OnOffType) {
-            IsyProgramConfiguration var_config = getThing().getConfiguration().as(IsyProgramConfiguration.class);
             getBridgeHandler().getInsteonClient().changeProgramState(var_config.id, channelUID.getId());
         } else {
             logger.warn("Unsupported command for variable handleCommand: " + command.toFullString());

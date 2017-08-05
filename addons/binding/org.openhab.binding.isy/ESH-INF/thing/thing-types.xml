@@ -777,7 +777,7 @@
 	</channel-type>
 
     <channel-type id="program_control">
-        <item-type>Switch</item-type>
+        <item-type>String</item-type>
         <label>Control</label>
         <description>Program Control</description>
         <category>Program Control</category>
