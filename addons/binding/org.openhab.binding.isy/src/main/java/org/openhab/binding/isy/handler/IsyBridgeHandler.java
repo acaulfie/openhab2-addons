@@ -131,7 +131,9 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                                 event.getVal());
                         IsyVariableHandler handler = getVariableHandler(VariableType.fromInt(event.getType()),
                                 event.getId());
-                        handler.handleUpdate(event.getVal());
+                        if (handler != null) {
+                            handler.handleUpdate(event.getVal());
+                        }
                     }
 
                 }, xStream);
