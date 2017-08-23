@@ -24,6 +24,7 @@ import org.openhab.binding.isy.internal.protocol.EventInfo;
 import org.openhab.binding.isy.internal.protocol.Properties;
 import org.openhab.binding.isy.internal.protocol.Property;
 import org.openhab.binding.isy.internal.protocol.StateVariable;
+import org.openhab.binding.isy.internal.protocol.SubscriptionResponse;
 import org.openhab.binding.isy.internal.protocol.VariableEvent;
 import org.openhab.binding.isy.internal.protocol.VariableList;
 import org.openhab.binding.isy.internal.protocol.elk.AreaEvent;
@@ -57,7 +58,8 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
         xStream.ignoreUnknownElements();
         xStream.setClassLoader(IsyRestDiscoveryService.class.getClassLoader());
         xStream.processAnnotations(new Class[] { Properties.class, Property.class, Event.class, EventInfo.class,
-                ZoneEvent.class, AreaEvent.class, VariableList.class, StateVariable.class, VariableEvent.class });
+                ZoneEvent.class, AreaEvent.class, VariableList.class, StateVariable.class, VariableEvent.class,
+                SubscriptionResponse.class });
     }
 
     @Override
@@ -67,7 +69,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     @Override
     public void dispose() {
-        super.dispose();
+        logger.trace("Dispose called");
         eventSubscriber.disconnect();
         eventSubscriber = null;
         // TODO must shutdown event subscription, rest calling service, and the references for discovery
@@ -135,7 +137,6 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                             handler.handleUpdate(event.getVal());
                         }
                     }
-
                 }, xStream);
         eventSubscriber.connect();
         isyClient = new IsyRestClient(config.getIpAddress(), authorizationHeaderValue, xStream);
@@ -150,7 +151,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     public void unregisterDiscoveryService() {
         this.bridgeDiscoveryService = null;
-
+        // TODO must remove from service list
     }
 
     private IsyDeviceHandler getThingHandler(String address) {
@@ -164,6 +165,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
                         || IsyBindingConstants.SCENE_THING_TYPE.equals(thing.getThingTypeUID()))) {
 
                     String theAddress = (String) thing.getConfiguration().get("address");
+
                     if (theAddress != null) {
                         String thingsAddress = NodeAddress.stripDeviceId(theAddress);
                         if (addressNoDeviceId.equals(thingsAddress)) {
@@ -186,4 +188,5 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
     public OHIsyClient getInsteonClient() {
         return isyClient;
     }
+
 }

@@ -137,4 +137,22 @@ public class IsyHandlerFactory extends BaseThingHandlerFactory {
                 "registerIsyBridgeDiscoveryService(): Bridge Handler - {}, Class Name - {}, Discovery Service - {}",
                 isyBridgeBridgeHandler, DiscoveryService.class.getName(), discoveryService);
     }
+
+    @Override
+    protected synchronized void removeHandler(ThingHandler thingHandler) {
+        if (thingHandler instanceof IsyBridgeHandler) {
+            ServiceRegistration<?> serviceReg = this.discoveryServiceRegistrations
+                    .get(thingHandler.getThing().getUID());
+            if (serviceReg != null) {
+                // remove discovery service, if bridge handler is removed
+                IsyRestDiscoveryService service = (IsyRestDiscoveryService) bundleContext
+                        .getService(serviceReg.getReference());
+                service.deactivate();
+                serviceReg.unregister();
+                discoveryServiceRegistrations.remove(thingHandler.getThing().getUID());
+                logger.debug("Isy discovery service removed");
+            }
+        }
+    }
+
 }

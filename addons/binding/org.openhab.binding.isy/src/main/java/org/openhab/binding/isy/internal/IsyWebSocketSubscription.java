@@ -22,6 +22,7 @@ public class IsyWebSocketSubscription {
     private String authenticationHeader;
     Future<Session> future = null;
     XStream xStream;
+    private WebSocketClient client;
 
     public IsyWebSocketSubscription(String url, String authenticationHeader, ISYModelChangeListener listener,
             XStream xStream) {
@@ -32,12 +33,19 @@ public class IsyWebSocketSubscription {
     }
 
     public void disconnect() {
-        // TODO implement
+        logger.debug("Disconnecting Isy web socket subscription");
+        if (client != null) {
+            client.destroy();
+            listener = null;
+            client = null;
+
+        }
+
     }
 
     public void connect() {
 
-        WebSocketClient client = new WebSocketClient();
+        client = new WebSocketClient();
         WebSocketListener webSocketListener = new WebSocketListener() {
 
             @Override
