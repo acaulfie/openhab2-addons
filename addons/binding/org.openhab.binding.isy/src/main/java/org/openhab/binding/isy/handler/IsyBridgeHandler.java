@@ -27,7 +27,12 @@ import org.openhab.binding.isy.internal.protocol.StateVariable;
 import org.openhab.binding.isy.internal.protocol.SubscriptionResponse;
 import org.openhab.binding.isy.internal.protocol.VariableEvent;
 import org.openhab.binding.isy.internal.protocol.VariableList;
+import org.openhab.binding.isy.internal.protocol.elk.Area;
 import org.openhab.binding.isy.internal.protocol.elk.AreaEvent;
+import org.openhab.binding.isy.internal.protocol.elk.Areas;
+import org.openhab.binding.isy.internal.protocol.elk.ElkStatus;
+import org.openhab.binding.isy.internal.protocol.elk.Topology;
+import org.openhab.binding.isy.internal.protocol.elk.Zone;
 import org.openhab.binding.isy.internal.protocol.elk.ZoneEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +64,7 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
         xStream.setClassLoader(IsyRestDiscoveryService.class.getClassLoader());
         xStream.processAnnotations(new Class[] { Properties.class, Property.class, Event.class, EventInfo.class,
                 ZoneEvent.class, AreaEvent.class, VariableList.class, StateVariable.class, VariableEvent.class,
-                SubscriptionResponse.class });
+                SubscriptionResponse.class, Topology.class, Zone.class, ElkStatus.class, Areas.class, Area.class });
     }
 
     @Override
