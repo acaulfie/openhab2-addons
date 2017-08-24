@@ -21,6 +21,7 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.eclipse.smarthome.core.types.State;
 import org.openhab.binding.isy.config.IsyInsteonDeviceConfiguration;
 import org.openhab.binding.isy.internal.NodeAddress;
+import org.openhab.binding.isy.internal.OHIsyClient;
 import org.openhab.binding.isy.internal.protocol.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,11 +102,16 @@ public class IsyDeviceHandler extends AbtractIsyThingHandler {
             try {
                 String isyAddress = NodeAddress
                         .parseAddressString(config.address, getDeviceIdForChannel(channelUID.getId())).toString();
-                logger.trace("insteon address for command is: {}", isyAddress);
-                Property state = bridgeHandler.getInsteonClient().getNodeStatus(isyAddress);
-                logger.trace("retrieved node state for node: {}, state: {}, uom: {}", isyAddress, state.value,
-                        state.uom);
-                handleUpdate(state.id, state.value, isyAddress);
+                logger.debug("insteon address for command is: {}", isyAddress);
+                OHIsyClient insteonClient = bridgeHandler.getInsteonClient();
+                if (insteonClient != null) {
+                    Property state = insteonClient.getNodeStatus(isyAddress);
+                    logger.trace("retrieved node state for node: {}, state: {}, uom: {}", isyAddress, state.value,
+                            state.uom);
+                    handleUpdate(state.id, state.value, isyAddress);
+                } else {
+                    logger.warn("insteon client is null");
+                }
             } catch (IllegalArgumentException e) {
                 logger.trace("no device id found channelUID: {}", channelUID);
             }

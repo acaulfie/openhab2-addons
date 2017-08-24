@@ -77,7 +77,6 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
         logger.trace("Dispose called");
         eventSubscriber.disconnect();
         eventSubscriber = null;
-        // TODO must shutdown event subscription, rest calling service, and the references for discovery
     }
 
     private IsyVariableHandler getVariableHandler(VariableType type, int id) {
@@ -156,7 +155,6 @@ public class IsyBridgeHandler extends BaseBridgeHandler implements InsteonClient
 
     public void unregisterDiscoveryService() {
         this.bridgeDiscoveryService = null;
-        // TODO must remove from service list
     }
 
     private IsyDeviceHandler getThingHandler(String address) {

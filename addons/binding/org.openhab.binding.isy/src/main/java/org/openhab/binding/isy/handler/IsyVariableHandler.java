@@ -27,12 +27,17 @@ public class IsyVariableHandler extends AbtractIsyThingHandler {
             IsyVariableConfiguration var_config = getThing().getConfiguration().as(IsyVariableConfiguration.class);
             logger.trace("Variable config: {}", var_config);
             OHIsyClient insteonClient = getBridgeHandler().getInsteonClient();
-            logger.trace("Insteon client: {}", insteonClient);
-            VariableEvent currentValue = insteonClient.getVariableValue(VariableType.fromInt(var_config.type),
-                    var_config.id);
-            logger.trace("CurrentValue: {}", currentValue);
-            handleUpdate(currentValue.getVal());
-        } else {
+            if (insteonClient != null) {
+                VariableEvent currentValue = insteonClient.getVariableValue(VariableType.fromInt(var_config.type),
+                        var_config.id);
+                logger.trace("CurrentValue: {}", currentValue);
+                handleUpdate(currentValue.getVal());
+            } else {
+                logger.warn("Insteon client is null");
+            }
+        } else
+
+        {
             if (command instanceof DecimalType) {
                 IsyVariableConfiguration var_config = getThing().getConfiguration().as(IsyVariableConfiguration.class);
                 getBridgeHandler().getInsteonClient().changeVariableState(VariableType.fromInt(var_config.type),
