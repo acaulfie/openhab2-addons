@@ -8,4 +8,9 @@ public class IsyVariableConfiguration {
     public int id;
     public int type;
 
+    @Override
+    public String toString() {
+        return "[IsyVariableConfiguration] id: " + id + ", type: " + type;
+    }
+
 }

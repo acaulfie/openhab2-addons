@@ -8,6 +8,7 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.isy.IsyBindingConstants;
 import org.openhab.binding.isy.config.IsyVariableConfiguration;
+import org.openhab.binding.isy.internal.OHIsyClient;
 import org.openhab.binding.isy.internal.VariableType;
 import org.openhab.binding.isy.internal.protocol.VariableEvent;
 import org.slf4j.Logger;
@@ -24,8 +25,12 @@ public class IsyVariableHandler extends AbtractIsyThingHandler {
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (RefreshType.REFRESH.equals(command)) {
             IsyVariableConfiguration var_config = getThing().getConfiguration().as(IsyVariableConfiguration.class);
-            VariableEvent currentValue = getBridgeHandler().getInsteonClient()
-                    .getVariableValue(VariableType.fromInt(var_config.type), var_config.id);
+            logger.trace("Variable config: {}", var_config);
+            OHIsyClient insteonClient = getBridgeHandler().getInsteonClient();
+            logger.trace("Insteon client: {}", insteonClient);
+            VariableEvent currentValue = insteonClient.getVariableValue(VariableType.fromInt(var_config.type),
+                    var_config.id);
+            logger.trace("CurrentValue: {}", currentValue);
             handleUpdate(currentValue.getVal());
         } else {
             if (command instanceof DecimalType) {
