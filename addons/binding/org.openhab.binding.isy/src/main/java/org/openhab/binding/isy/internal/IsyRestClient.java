@@ -352,13 +352,18 @@ public class IsyRestClient implements OHIsyClient {
     public VariableList getVariableDefinitions(VariableType type) {
         String message = stateVariablesDefinitionsTarget.path(Integer.toString(type.getType())).request()
                 .header(AUTHORIZATIONHEADERNAME, authorizationHeaderValue).accept(MediaType.TEXT_XML).get(String.class);
-        logger.trace("theResult is: {}", message);
+        logger.debug("theResult is: {}", message);
 
         Object objResult = xStream.fromXML(message);
         if (objResult instanceof VariableList) {
-            for (StateVariable variable : ((VariableList) objResult).getStateVariables()) {
-                logger.debug("[variable] id: {}, name: {}", variable.getId(), variable.getName());
 
+            List<StateVariable> variableList = ((VariableList) objResult).getStateVariables();
+            if (variableList != null) {
+                for (StateVariable variable : variableList) {
+                    logger.debug("[variable] id: {}, name: {}", variable.getId(), variable.getName());
+                }
+            } else {
+                logger.debug("variable list is null");
             }
         }
         return (VariableList) objResult;
