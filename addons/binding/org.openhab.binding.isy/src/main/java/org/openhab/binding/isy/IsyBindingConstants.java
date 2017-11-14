@@ -41,6 +41,7 @@ public class IsyBindingConstants {
     public final static ThingTypeUID OUTLETLINC_DIMMER_THING_TYPE = new ThingTypeUID(BINDING_ID, "outletlinc");
     public final static ThingTypeUID OUTLETLINC_DUAL_THING_TYPE = new ThingTypeUID(BINDING_ID, "dualoutletlinc");
     public final static ThingTypeUID FANLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "fanlinc");
+    public final static ThingTypeUID SMOKE_DETECTOR_THING_TYPE = new ThingTypeUID(BINDING_ID, "smokedetector");
 
     public final static ThingTypeUID TRIGGERLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "triggerlinc");
     public final static ThingTypeUID TOGGLELINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "togglelinc");
@@ -92,4 +93,12 @@ public class IsyBindingConstants {
 
     public final static String CHANNEL_LOAD = "load";
     public final static String CHANNEL_LOAD2 = "load2";
+
+    public final static String CHANNEL_SMOKEDETECT_SMOKE = "smokesensor_smoke";
+    public final static String CHANNEL_SMOKEDETECT_CO = "smokesensor_co";
+    public final static String CHANNEL_SMOKEDETECT_TEST = "smokesensor_test";
+    public final static String CHANNEL_SMOKEDETECT_UNKNOWNMESSAGE = "smokesensor_unknown_message";
+    public final static String CHANNEL_SMOKEDETECT_CLEAR = "smokesensor_clear";
+    public final static String CHANNEL_SMOKEDETECT_LOWBAT = "smokesensor_lowbattery";
+    public final static String CHANNEL_SMOKEDETECT_MALFUNCTION = "smokesensor_malfunction";
 }

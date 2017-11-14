@@ -87,7 +87,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("02.39", IsyBindingConstants.OUTLETLINC_DUAL_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1A", IsyBindingConstants.TOGGLELINC_THING_TYPE);
         mMapDeviceTypeThingType.put("10.11", IsyBindingConstants.HIDDENDOORSENSOR_THING_TYPE);
-
+        mMapDeviceTypeThingType.put("10.0A", IsyBindingConstants.SMOKE_DETECTOR_THING_TYPE);
     }
 
     public void activate() {
