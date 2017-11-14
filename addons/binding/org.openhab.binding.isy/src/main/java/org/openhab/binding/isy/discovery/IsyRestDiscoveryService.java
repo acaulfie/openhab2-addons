@@ -80,8 +80,9 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("00.12", IsyBindingConstants.REMOTELINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.1C", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.41", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.1A", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1F", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
-        mMapDeviceTypeThingType.put("01.21", IsyBindingConstants.OUTLETLINC_DIMMER_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.21", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.08", IsyBindingConstants.OUTLETLINC_DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("02.39", IsyBindingConstants.OUTLETLINC_DUAL_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1A", IsyBindingConstants.TOGGLELINC_THING_TYPE);
