@@ -81,6 +81,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("01.1C", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.41", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1F", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.21", IsyBindingConstants.OUTLETLINC_DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("02.08", IsyBindingConstants.OUTLETLINC_DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("02.39", IsyBindingConstants.OUTLETLINC_DUAL_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1A", IsyBindingConstants.TOGGLELINC_THING_TYPE);
@@ -181,20 +182,23 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         OHIsyClient insteon = this.bridgeHandler.getInsteonClient();
         Map<String, Object> properties = null;
         ThingUID bridgeUID = this.bridgeHandler.getThing().getUID();
-        for (StateVariable variable : insteon.getVariableDefinitions(variableType).getStateVariables()) {
-            logger.debug("discovered variable, id:{}, name: {} ", variable.getId(), variable.getName());
-            properties = new HashMap<>(0);
-            properties.put(IsyVariableConfiguration.ID, variable.getId());
-            properties.put(IsyVariableConfiguration.TYPE, variableType.getType());
+        List<StateVariable> variableList = insteon.getVariableDefinitions(variableType).getStateVariables();
+        if (variableList != null) {
+            for (StateVariable variable : variableList) {
+                logger.debug("discovered variable, id:{}, name: {} ", variable.getId(), variable.getName());
+                properties = new HashMap<>(0);
+                properties.put(IsyVariableConfiguration.ID, variable.getId());
+                properties.put(IsyVariableConfiguration.TYPE, variableType.getType());
 
-            String typeAsText = variableType.equals(VariableType.INTEGER) ? "integer" : "state";
+                String typeAsText = variableType.equals(VariableType.INTEGER) ? "integer" : "state";
 
-            ThingTypeUID theThingTypeUid = IsyBindingConstants.VARIABLE_THING_TYPE;
-            String thingID = typeAsText + "_" + variable.getId();
-            ThingUID thingUID = new ThingUID(theThingTypeUid, bridgeUID, thingID);
-            DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID).withBridge(bridgeUID)
-                    .withProperties(properties).withBridge(bridgeUID).withLabel(variable.getName()).build();
-            thingDiscovered(discoveryResult);
+                ThingTypeUID theThingTypeUid = IsyBindingConstants.VARIABLE_THING_TYPE;
+                String thingID = typeAsText + "_" + variable.getId();
+                ThingUID thingUID = new ThingUID(theThingTypeUid, bridgeUID, thingID);
+                DiscoveryResult discoveryResult = DiscoveryResultBuilder.create(thingUID).withBridge(bridgeUID)
+                        .withProperties(properties).withBridge(bridgeUID).withLabel(variable.getName()).build();
+                thingDiscovered(discoveryResult);
+            }
         }
     }
 
