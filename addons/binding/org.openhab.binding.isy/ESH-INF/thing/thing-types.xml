@@ -246,8 +246,8 @@
 				<label>Insteon Address</label>
 				<description>Insteon Address of device.</description>
 			</parameter>
-			<label>Name</label>
 			<parameter name="name" type="text" required="true">
+                <label>Name</label>
 				<description>Text description of device.</description>
 			</parameter>
 			<parameter name="deviceid" type="text" readOnly="true">
@@ -527,36 +527,71 @@
 			</parameter>
 		</config-description>
 	</thing-type>
-	<thing-type id="smokedetector">
-		<supported-bridge-type-refs>
-			<bridge-type-ref id="isyBridge" />
-		</supported-bridge-type-refs>
-		<label>Smoke Detector</label>
-		<description>Insteon Smoke/CO Detector</description>
-		<channels>
-			<channel id="smokesensor_smoke" typeId="smokesensor_smoke" />
-			<channel id="smokesensor_co" typeId="smokesensor_co" />
-			<channel id="smokesensor_test" typeId="smokesensor_test" />
-			<channel id="smokesensor_unknown_message" typeId="smokesensor_unknown_message" />
-			<channel id="smokesensor_clear" typeId="smokesensor_clear" />
-			<channel id="smokesensor_lowbattery" typeId="smokesensor_lowbattery" />
-			<channel id="smokesensor_malfunction" typeId="smokesensor_malfunction" />
-		</channels>
-		<config-description>
-			<parameter name="address" type="text" required="true">
-				<label>Insteon Address</label>
-				<description>Insteon Address of device.</description>
-			</parameter>
-			<parameter name="name" type="text" required="true">
-				<label>Name</label>
-				<description>Text description of device.</description>
-			</parameter>
-			<parameter name="deviceid" type="text" readOnly="true">
-				<label>Device Id</label>
-				<description>Insteon device ID.</description>
-			</parameter>
-		</config-description>
-	</thing-type>
+    <thing-type id="smokedetector">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="isyBridge" />
+        </supported-bridge-type-refs>
+        <label>Smoke Detector</label>
+        <description>Insteon Smoke/CO Detector</description>
+        <channels>
+            <channel id="smokesensor_smoke" typeId="smokesensor_smoke" />
+            <channel id="smokesensor_co" typeId="smokesensor_co" />
+            <channel id="smokesensor_test" typeId="smokesensor_test" />
+            <channel id="smokesensor_unknown_message" typeId="smokesensor_unknown_message" />
+            <channel id="smokesensor_clear" typeId="smokesensor_clear" />
+            <channel id="smokesensor_lowbattery" typeId="smokesensor_lowbattery" />
+            <channel id="smokesensor_malfunction" typeId="smokesensor_malfunction" />
+        </channels>
+        <config-description>
+            <parameter name="address" type="text" required="true">
+                <label>Insteon Address</label>
+                <description>Insteon Address of device.</description>
+            </parameter>
+            <parameter name="name" type="text" required="true">
+                <label>Name</label>
+                <description>Text description of device.</description>
+            </parameter>
+            <parameter name="deviceid" type="text" readOnly="true">
+                <label>Device Id</label>
+                <description>Insteon device ID.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
+    <thing-type id="venstar_thermostat">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="isyBridge" />
+        </supported-bridge-type-refs>
+        <label>Venstar Thermostat</label>
+        <description>Insteon Venstar Thermostat</description>
+        <channels>
+            <channel id="venstar_temp" typeId="venstar_temp_chan" />
+            <channel id="venstar_humidity" typeId="venstar_humidity_chan" />
+            <channel id="venstar_coolsetpoint" typeId="venstar_coolsetpoint_chan" />
+            <channel id="venstar_heatsetpoint" typeId="venstar_heatsetpoint_chan" />
+            <channel id="venstar_mode" typeId="venstar_mode_chan" />
+            <channel id="venstar_fan" typeId="venstar_fan_chan" />
+            <channel id="venstar_heatcoolstate" typeId="venstar_heatcoolstate_chan" />
+<!--        <channel id="venstar_uom" typeId="venstar_uom_chan" />
+-->            
+            <channel id="venstar_coolcontrol" typeId="venstar_coolcontrol_chan" />
+            <channel id="venstar_heatcontrol" typeId="venstar_heatcontrol_chan" />
+            <channel id="venstar_fancontrol" typeId="venstar_fancontrol_chan" />
+        </channels>
+        <config-description>
+            <parameter name="address" type="text" required="true">
+                <label>Insteon Address</label>
+                <description>Insteon Address of device.</description>
+            </parameter>
+            <parameter name="name" type="text" required="true">
+                <label>Name</label>
+                <description>Text description of device.</description>
+            </parameter>
+            <parameter name="deviceid" type="text" readOnly="true">
+                <label>Device Id</label>
+                <description>Insteon device ID.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 	<thing-type id="unrecognized">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="isyBridge" />
@@ -598,50 +633,149 @@
 		<state readOnly="true" />
 	</channel-type>
 
+    <channel-type id="venstar_temp_chan">
+        <item-type>Number</item-type>
+        <label>Temperature</label>
+        <description>Current Temperature</description>
+        <category>Thermostat</category>
+        <state pattern="%.1f °F" readOnly="true"/>
+    </channel-type>
+    <channel-type id="venstar_humidity_chan">
+        <item-type>Number</item-type>
+        <label>Humidity</label>
+        <description>Current Humidity</description>
+        <category>Thermostat</category>
+        <state pattern="%.1f %" readOnly="true"/>
+    </channel-type>
+    <channel-type id="venstar_coolsetpoint_chan">
+        <item-type>Number</item-type>
+        <label>Cool Setpoint</label>
+        <description>Cool Setpoint</description>
+        <category>Thermostat</category>
+        <state pattern="%.1f °F" readOnly="false"/>
+    </channel-type>
+    <channel-type id="venstar_heatsetpoint_chan">
+        <item-type>Number</item-type>
+        <label>Heat Setpoint</label>
+        <description>Heat Setpoint</description>
+        <category>Thermostat</category>
+        <state pattern="%.1f °F" readOnly="false"/>
+    </channel-type>
+    <channel-type id="venstar_mode_chan">
+        <item-type>String</item-type>
+        <label>Mode</label>
+        <description>Mode Setting</description>
+        <category>Thermostat</category>
+        <state pattern="%s" readOnly="false">
+<!--             <options>
+                <option value="OFF">OFF</option>
+                <option value="HEAT">HEAT</option>
+                <option value="COOL">COOL</option>
+                <option value="AUTO">AUTO</option>
+                <option value="PROGRAM_AUTO">PROGRAM_AUTO</option>
+                <option value="PROGRAM_HEAT">PROGRAM_HEAT</option>
+                <option value="PROGRAM_COOL">PROGRAM_COOL</option>
+            </options>
+ -->        </state>
+    </channel-type>
+    <channel-type id="venstar_fan_chan">
+        <item-type>String</item-type>
+        <label>Fan Setting</label>
+        <description>Fan Setting</description>
+        <category>Thermostat</category>
+        <state pattern="%s" readOnly="false">
+<!--             <options>
+                <option value="OFF">OFF</option>
+                <option value="AUTO">AUTO</option>
+            </options>
+ -->        </state>
+    </channel-type>
+    <channel-type id="venstar_heatcoolstate_chan">
+        <item-type>String</item-type>
+        <label>Heat/Cool State</label>
+        <description>Heat/Cool State</description>
+        <category>Thermostat</category>
+        <state pattern="%s" readOnly="true">
+<!--             <options>
+                <option value="OFF">OFF</option>
+                <option value="HEAT">HEAT</option>
+                <option value="COOL">COOL</option>
+            </options>
+ -->        </state>
+    </channel-type>
+    <channel-type id="venstar_uom_chan">
+        <item-type>Number</item-type>
+        <label>Unit Setting</label>
+        <description>Unit Setting</description>
+        <category>Thermostat</category>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="venstar_coolcontrol_chan">
+        <item-type>Switch</item-type>
+        <label>Cool Control</label>
+        <description>Cool Control status</description>
+        <category>Thermostat</category>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="venstar_heatcontrol_chan">
+        <item-type>Switch</item-type>
+        <label>Heat Control</label>
+        <description>Heat Control status</description>
+        <category>Thermostat</category>
+        <state readOnly="true" />
+    </channel-type>
+    <channel-type id="venstar_fancontrol_chan">
+        <item-type>Switch</item-type>
+        <label>Fan Control</label>
+        <description>Fan Control status</description>
+        <category>Thermostat</category>
+        <state readOnly="true" />
+    </channel-type>
+
     <channel-type id="smokesensor_smoke">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Smoke Detected</label>
         <description>Indicates if smoke is detected</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_co">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>CO Detected</label>
         <description>Indicates if carbon monoxide is detected</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_test">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Test</label>
         <description>Test button pressed</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_unknown_message">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Unknown Message</label>
         <description>Unknown Message</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_clear">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Clear</label>
         <description>Smoke Detector Status cleared</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_lowbattery">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Low Battery</label>
         <description>Smoke Detector Low Battery detected</description>
         <category>Sensor</category>
         <state readOnly="true" />
     </channel-type>
     <channel-type id="smokesensor_malfunction">
-        <item-type>Contact</item-type>
+        <item-type>Switch</item-type>
         <label>Malfunction</label>
         <description>Smoke Detector Malfunction detected</description>
         <category>Sensor</category>

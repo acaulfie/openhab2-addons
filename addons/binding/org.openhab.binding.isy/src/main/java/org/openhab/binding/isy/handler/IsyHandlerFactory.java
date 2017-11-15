@@ -43,7 +43,7 @@ public class IsyHandlerFactory extends BaseThingHandlerFactory {
             INLINELINC_SWITCH_THING_TYPE, PROGRAM_THING_TYPE, VARIABLE_THING_TYPE, SCENE_THING_TYPE,
             UNRECOGNIZED_SWITCH_THING_TYPE, KEYPADLINC_8_THING_TYPE, OUTLETLINC_DIMMER_THING_TYPE,
             TRIGGERLINC_THING_TYPE, TOGGLELINC_THING_TYPE, HIDDENDOORSENSOR_THING_TYPE, OUTLETLINC_DUAL_THING_TYPE,
-            FANLINC_THING_TYPE, SMOKE_DETECTOR_THING_TYPE);
+            FANLINC_THING_TYPE, SMOKE_DETECTOR_THING_TYPE, VENSTAR_THERMOSTAT_THING_TYPE);
 
     private Map<ThingUID, ServiceRegistration<?>> discoveryServiceRegistrations = new HashMap<ThingUID, ServiceRegistration<?>>();
 
@@ -117,6 +117,11 @@ public class IsyHandlerFactory extends BaseThingHandlerFactory {
                     .addChannelforDeviceId(CHANNEL_SMOKEDETECT_CLEAR, 5)
                     .addChannelforDeviceId(CHANNEL_SMOKEDETECT_LOWBAT, 6)
                     .addChannelforDeviceId(CHANNEL_SMOKEDETECT_MALFUNCTION, 7).build();
+        } else if (thingTypeUID.equals(VENSTAR_THERMOSTAT_THING_TYPE)) {
+            return IsyHandlerBuilder.builder(thing).addChannelforDeviceId(CHANNEL_VENSTAR_MAIN, 1)
+                    .addChannelforDeviceId(CHANNEL_VENSTAR_COOLCONTROL, 2)
+                    .addChannelforDeviceId(CHANNEL_VENSTAR_HEATCONTROL, 3)
+                    .addChannelforDeviceId(CHANNEL_VENSTAR_FANCONTROL, 4).build();
         } else if (thingTypeUID.equals(THING_TYPE_ISYBRIDGE)) {
             IsyBridgeHandler handler = new IsyBridgeHandler((Bridge) thing);
             registerIsyBridgeDiscoveryService(handler);

@@ -43,6 +43,8 @@ public class IsyBindingConstants {
     public final static ThingTypeUID FANLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "fanlinc");
     public final static ThingTypeUID SMOKE_DETECTOR_THING_TYPE = new ThingTypeUID(BINDING_ID, "smokedetector");
 
+    public final static ThingTypeUID VENSTAR_THERMOSTAT_THING_TYPE = new ThingTypeUID(BINDING_ID, "venstar_thermostat");
+
     public final static ThingTypeUID TRIGGERLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "triggerlinc");
     public final static ThingTypeUID TOGGLELINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "togglelinc");
     public final static ThingTypeUID HIDDENDOORSENSOR_THING_TYPE = new ThingTypeUID(BINDING_ID, "hiddendoorsensor");
@@ -101,4 +103,19 @@ public class IsyBindingConstants {
     public final static String CHANNEL_SMOKEDETECT_CLEAR = "smokesensor_clear";
     public final static String CHANNEL_SMOKEDETECT_LOWBAT = "smokesensor_lowbattery";
     public final static String CHANNEL_SMOKEDETECT_MALFUNCTION = "smokesensor_malfunction";
+
+    public final static String CHANNEL_VENSTAR_TEMP = "venstar_temp";
+    public final static String CHANNEL_VENSTAR_HUMID = "venstar_humidity";
+    public final static String CHANNEL_VENSTAR_COOLSET = "venstar_coolsetpoint";
+    public final static String CHANNEL_VENSTAR_HEATSET = "venstar_heatsetpoint";
+    public final static String CHANNEL_VENSTAR_MODE = "venstar_mode";// 0 = off, 1 = heat, 2 = cool, 3 = auto, 5 = prog
+                                                                     // auto, 6 = prog heat, 7 = prog cool,
+    public final static String CHANNEL_VENSTAR_FAN = "venstar_fan"; // fan setting: 7 = ON, 8 = Auto
+    public final static String CHANNEL_VENSTAR_HEATCOOL = "venstar_heatcoolstate"; // 0 = Off, 1 = heat on, 2 = cool on
+    public final static String CHANNEL_VENSTAR_UOM = "venstar_uom";
+    public final static String CHANNEL_VENSTAR_MAIN = "venstar_main";
+    public final static String CHANNEL_VENSTAR_COOLCONTROL = "venstar_coolcontrol";
+    public final static String CHANNEL_VENSTAR_HEATCONTROL = "venstar_heatcontrol";
+    public final static String CHANNEL_VENSTAR_FANCONTROL = "venstar_fancontrol";
+
 }

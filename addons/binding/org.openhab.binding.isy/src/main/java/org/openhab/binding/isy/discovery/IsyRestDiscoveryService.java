@@ -88,6 +88,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("02.1A", IsyBindingConstants.TOGGLELINC_THING_TYPE);
         mMapDeviceTypeThingType.put("10.11", IsyBindingConstants.HIDDENDOORSENSOR_THING_TYPE);
         mMapDeviceTypeThingType.put("10.0A", IsyBindingConstants.SMOKE_DETECTOR_THING_TYPE);
+        mMapDeviceTypeThingType.put("05.03", IsyBindingConstants.VENSTAR_THERMOSTAT_THING_TYPE);
     }
 
     public void activate() {
@@ -125,6 +126,10 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
             logger.error("error in discover programs", e);
         }
 
+        // (TH) POTENTIAL HACK
+        // it would be nice to restart the web socket to the ISY after discovery is done
+        // the web socket is started to early, before any isy "things" are created, thus the initial ws update from the
+        // isy is missed
     }
 
     private void discoverPrograms() {
