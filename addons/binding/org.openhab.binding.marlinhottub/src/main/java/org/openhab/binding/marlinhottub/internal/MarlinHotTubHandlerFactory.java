@@ -8,19 +8,19 @@
  */
 package org.openhab.binding.marlinhottub.internal;
 
-import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.*;
+import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.THING_TYPE_SAMPLE;
 
 import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.openhab.binding.marlinhottub.handler.MarlinHotTubHandler;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.openhab.binding.marlinhottub.handler.MarlinHotTubHandler;
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 public class MarlinHotTubHandlerFactory extends BaseThingHandlerFactory {
 
+    @SuppressWarnings("null")
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SAMPLE);
 
     @Override

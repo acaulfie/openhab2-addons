@@ -8,7 +8,7 @@
  */
 package org.openhab.binding.marlinhottub.handler;
 
-import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.*;
+import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.CHANNEL_1;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -25,9 +25,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Hentschel - Initial contribution
  */
- @NonNullByDefault
+@NonNullByDefault
 public class MarlinHotTubHandler extends BaseThingHandler {
 
+    @SuppressWarnings("null")
     private final Logger logger = LoggerFactory.getLogger(MarlinHotTubHandler.class);
 
     public MarlinHotTubHandler(Thing thing) {
@@ -38,6 +39,7 @@ public class MarlinHotTubHandler extends BaseThingHandler {
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (channelUID.getId().equals(CHANNEL_1)) {
             // TODO: handle command
+            logger.debug("command {} with channel uid {}", command, channelUID);
 
             // Note: if communication with thing fails for some reason,
             // indicate that by setting the status with detail information
