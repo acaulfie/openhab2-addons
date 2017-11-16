@@ -592,6 +592,31 @@
             </parameter>
         </config-description>
     </thing-type>
+    <thing-type id="ezx10_rf">
+        <supported-bridge-type-refs>
+            <bridge-type-ref id="isyBridge" />
+        </supported-bridge-type-refs>
+        <label>EZX10-RF Bridge</label>
+        <description>EZX10-RF Bridge</description>
+        <channels>
+            <channel id="Rcvr" typeId="switchState" />
+            <channel id="Rcvr-Lights" typeId="switchState" />
+        </channels>
+        <config-description>
+            <parameter name="address" type="text" required="true">
+                <label>Insteon Address</label>
+                <description>Insteon Address of device.</description>
+            </parameter>
+            <parameter name="name" type="text" required="true">
+                <label>Name</label>
+                <description>Text description of device.</description>
+            </parameter>
+            <parameter name="deviceid" type="text" readOnly="true">
+                <label>Device Id</label>
+                <description>Insteon device ID.</description>
+            </parameter>
+        </config-description>
+    </thing-type>
 	<thing-type id="unrecognized">
 		<supported-bridge-type-refs>
 			<bridge-type-ref id="isyBridge" />

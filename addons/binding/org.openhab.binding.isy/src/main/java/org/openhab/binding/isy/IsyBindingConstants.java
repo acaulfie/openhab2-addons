@@ -42,8 +42,8 @@ public class IsyBindingConstants {
     public final static ThingTypeUID OUTLETLINC_DUAL_THING_TYPE = new ThingTypeUID(BINDING_ID, "dualoutletlinc");
     public final static ThingTypeUID FANLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "fanlinc");
     public final static ThingTypeUID SMOKE_DETECTOR_THING_TYPE = new ThingTypeUID(BINDING_ID, "smokedetector");
-
     public final static ThingTypeUID VENSTAR_THERMOSTAT_THING_TYPE = new ThingTypeUID(BINDING_ID, "venstar_thermostat");
+    public final static ThingTypeUID EZX10_RF_THING_TYPE = new ThingTypeUID(BINDING_ID, "ezx10_rf");
 
     public final static ThingTypeUID TRIGGERLINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "triggerlinc");
     public final static ThingTypeUID TOGGLELINC_THING_TYPE = new ThingTypeUID(BINDING_ID, "togglelinc");

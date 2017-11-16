@@ -75,6 +75,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("02.2F", IsyBindingConstants.SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("10.08", IsyBindingConstants.LEAKDETECTOR_THING_TYPE);
         mMapDeviceTypeThingType.put("01.1B", IsyBindingConstants.KEYPAD_LINC_6_THING_TYPE);
+        mMapDeviceTypeThingType.put("02.2C", IsyBindingConstants.KEYPAD_LINC_6_THING_TYPE);
         mMapDeviceTypeThingType.put("01.41", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.42", IsyBindingConstants.KEYPAD_LINC_5_THING_TYPE);
         mMapDeviceTypeThingType.put("00.12", IsyBindingConstants.REMOTELINC_8_THING_TYPE);
@@ -89,6 +90,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("10.11", IsyBindingConstants.HIDDENDOORSENSOR_THING_TYPE);
         mMapDeviceTypeThingType.put("10.0A", IsyBindingConstants.SMOKE_DETECTOR_THING_TYPE);
         mMapDeviceTypeThingType.put("05.03", IsyBindingConstants.VENSTAR_THERMOSTAT_THING_TYPE);
+        mMapDeviceTypeThingType.put("03.0D", IsyBindingConstants.EZX10_RF_THING_TYPE);
     }
 
     public void activate() {
