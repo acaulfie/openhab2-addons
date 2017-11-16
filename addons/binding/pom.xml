@@ -94,5 +94,7 @@
     <module>org.openhab.binding.yamahareceiver</module>
     <module>org.openhab.binding.zoneminder</module>
     <module>org.openhab.binding.zway</module>
+    <module>org.openhab.binding.hentschelhottubbinding</module>
+    <module>org.openhab.binding.marlinhottub</module>
   </modules>
 </project>
