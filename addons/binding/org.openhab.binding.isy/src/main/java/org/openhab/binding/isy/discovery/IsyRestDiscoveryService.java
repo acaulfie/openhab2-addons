@@ -43,17 +43,20 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("10.01", IsyBindingConstants.MOTION_THING_TYPE);
         mMapDeviceTypeThingType.put("01.20", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.24", IsyBindingConstants.DIMMER_THING_TYPE);
+
         mMapDeviceTypeThingType.put("01.2D", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.0E", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.01", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.00", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.30", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.06", IsyBindingConstants.DIMMER_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.1A", IsyBindingConstants.DIMMER_THING_TYPE);
+        mMapDeviceTypeThingType.put("01.0C", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.1E", IsyBindingConstants.DIMMER_THING_TYPE);
         // mMapDeviceTypeThingType.put("01.09", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.19", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("21.12", IsyBindingConstants.DIMMER_THING_TYPE);
-
+        mMapDeviceTypeThingType.put("01.02", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.1F", IsyBindingConstants.DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("01.2E", IsyBindingConstants.FANLINC_THING_TYPE);
         mMapDeviceTypeThingType.put("01.3A", IsyBindingConstants.DIMMER_THING_TYPE);
@@ -61,6 +64,7 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("10.02", IsyBindingConstants.TRIGGERLINC_THING_TYPE);
         mMapDeviceTypeThingType.put("02.2A", IsyBindingConstants.SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.0A", IsyBindingConstants.SWITCH_THING_TYPE);
+        mMapDeviceTypeThingType.put("02.0B", IsyBindingConstants.SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1C", IsyBindingConstants.SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.09", IsyBindingConstants.SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("01.0E", IsyBindingConstants.SWITCH_THING_TYPE);
@@ -77,9 +81,11 @@ public class IsyRestDiscoveryService extends AbstractDiscoveryService {
         mMapDeviceTypeThingType.put("01.1B", IsyBindingConstants.KEYPAD_LINC_6_THING_TYPE);
         mMapDeviceTypeThingType.put("01.41", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.42", IsyBindingConstants.KEYPAD_LINC_5_THING_TYPE);
+        mMapDeviceTypeThingType.put("00.05", IsyBindingConstants.REMOTELINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("00.12", IsyBindingConstants.REMOTELINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.1C", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
         mMapDeviceTypeThingType.put("01.41", IsyBindingConstants.KEYPADLINC_8_THING_TYPE);
+        mMapDeviceTypeThingType.put("02.10", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.1F", IsyBindingConstants.INLINELINC_SWITCH_THING_TYPE);
         mMapDeviceTypeThingType.put("02.08", IsyBindingConstants.OUTLETLINC_DIMMER_THING_TYPE);
         mMapDeviceTypeThingType.put("02.39", IsyBindingConstants.OUTLETLINC_DUAL_THING_TYPE);
