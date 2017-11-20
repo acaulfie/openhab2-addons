@@ -201,6 +201,11 @@ public class VenstarThermostatDeviceHandler extends IsyDeviceHandler {
     }
 
     @Override
+    protected void setControlChannel(String channelId) {
+        super.setControlChannel(channelId);
+    }
+
+    @Override
     protected int getDeviceIdForChannel(String channel) {
 
         for (int id : ventstarDeviceIDMap.keySet()) {
@@ -377,6 +382,13 @@ public class VenstarThermostatDeviceHandler extends IsyDeviceHandler {
 
         // handle deviceid (channel) 1 separate, get all properties from our own map
         if (deviceId == 1) {
+            // protect input from broken ISY updates (this appears to be only happening for the venstar)
+            if (action == null || action.trim().length() == 0) {
+                logger.warn(
+                        "VenstarThermostatDeviceHandler.handleUpdate with invalid action, control: {} , action: '{}' , node:{}",
+                        control, action, node);
+                return;
+            }
             State newState = null;
             String vsChannelId = null;
 
