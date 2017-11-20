@@ -22,7 +22,7 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.openhab.binding.isy.discovery.IsyRestDiscoveryService;
-import org.openhab.binding.isy.handler.special.VenstarThermostatHandlerBuilder;
+import org.openhab.binding.isy.handler.special.VenstarThermostatDeviceHandler;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,10 +119,7 @@ public class IsyHandlerFactory extends BaseThingHandlerFactory {
                     .addChannelforDeviceId(CHANNEL_SMOKEDETECT_LOWBAT, 6)
                     .addChannelforDeviceId(CHANNEL_SMOKEDETECT_MALFUNCTION, 7).build();
         } else if (thingTypeUID.equals(VENSTAR_THERMOSTAT_THING_TYPE)) {
-            return VenstarThermostatHandlerBuilder.builder(thing).addChannelforDeviceId(CHANNEL_VENSTAR_MAIN, 1)
-                    .addChannelforDeviceId(CHANNEL_VENSTAR_COOLCONTROL, 2)
-                    .addChannelforDeviceId(CHANNEL_VENSTAR_HEATCONTROL, 3)
-                    .addChannelforDeviceId(CHANNEL_VENSTAR_FANCONTROL, 4).build();
+            return new VenstarThermostatDeviceHandler(thing);
         } else if (thingTypeUID.equals(EZX10_RF_THING_TYPE)) {
             return IsyHandlerBuilder.builder(thing).addChannelforDeviceId(CHANNEL_SWITCH, 1)
                     .addChannelforDeviceId(CHANNEL_SWITCH, 2).build();

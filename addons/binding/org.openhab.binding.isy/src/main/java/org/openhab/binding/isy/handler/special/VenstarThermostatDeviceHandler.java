@@ -3,6 +3,8 @@
  */
 package org.openhab.binding.isy.handler.special;
 
+import static org.openhab.binding.isy.IsyBindingConstants.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -198,6 +200,11 @@ public class VenstarThermostatDeviceHandler extends IsyDeviceHandler {
         this.venstarPropertyCommandMap.put("CLISPH", IsyBindingConstants.CHANNEL_VENSTAR_HEATSET);
         this.venstarPropertyCommandMap.put("CLIFS", IsyBindingConstants.CHANNEL_VENSTAR_FAN);
         this.venstarPropertyCommandMap.put("UOM", IsyBindingConstants.CHANNEL_VENSTAR_UOM);
+
+        this.addChannelToDevice(CHANNEL_VENSTAR_MAIN, 1);
+        this.addChannelToDevice(CHANNEL_VENSTAR_COOLCONTROL, 2);
+        this.addChannelToDevice(CHANNEL_VENSTAR_HEATCONTROL, 3);
+        this.addChannelToDevice(CHANNEL_VENSTAR_FANCONTROL, 4);
     }
 
     @Override
