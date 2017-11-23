@@ -114,8 +114,9 @@ class HomekitThermostatImpl extends AbstractTemperatureHomekitAccessoryImpl<Grou
                 mode = ThermostatMode.OFF;
             } else {
                 logger.error(
-                        "Unrecognized heating cooling target mode: {}. Expected cool, heat, auto, or off strings in value.",
-                        stringValue);
+                        "Unrecognized heating cooling target mode: {}. Expected '{}', '{}', '{}' or '{}' strings in value.",
+                        stringValue, settings.getThermostatCoolMode(), settings.getThermostatHeatMode(),
+                        settings.getThermostatAutoMode(), settings.getThermostatOffMode());
                 mode = ThermostatMode.OFF;
             }
         } else {
