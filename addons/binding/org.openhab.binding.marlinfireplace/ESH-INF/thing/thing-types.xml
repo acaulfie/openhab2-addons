@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="marlinhottub"
+<thing:thing-descriptions bindingId="marlinfireplace"
 						  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 						  xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 						  xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
-	<thing-type id="marlinhottub">
-		<label>Marlin Hot Tub</label>
-		<description>Marlin Hot Tub Binding</description>
+	<!-- Sample Thing Type -->
+	<thing-type id="sample">
+		<label>MarlinFireplace Binding Thing</label>
+		<description>Sample thing for MarlinFireplace Binding</description>
 
 		<channels>
 			<channel id="channel1" typeId="sample-channel"/>
@@ -15,9 +16,9 @@
 
 	<!-- Sample Channel Type -->
 	<channel-type id="sample-channel">
-		<item-type>marlinhottubItem</item-type>
-		<label>MarlinHotTub Binding Channel</label>
-		<description>Sample channel for MarlinHotTub Binding</description>
+		<item-type>marlinfireplaceItem</item-type>
+		<label>MarlinFireplace Binding Channel</label>
+		<description>Sample channel for MarlinFireplace Binding</description>
 	</channel-type>
 
 </thing:thing-descriptions>

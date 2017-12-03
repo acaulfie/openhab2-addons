@@ -10,6 +10,9 @@ package org.openhab.binding.marlinhottub.handler;
 
 import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.CHANNEL_1;
 
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -30,7 +33,9 @@ public class MarlinHotTubHandler extends BaseThingHandler {
 
     @SuppressWarnings("null")
     private final Logger logger = LoggerFactory.getLogger(MarlinHotTubHandler.class);
+    private ScheduledFuture<?> poller;
 
+    @SuppressWarnings("null")
     public MarlinHotTubHandler(Thing thing) {
         super(thing);
     }
@@ -48,17 +53,28 @@ public class MarlinHotTubHandler extends BaseThingHandler {
         }
     }
 
+    @SuppressWarnings("null")
     @Override
     public void initialize() {
         // TODO: Initialize the thing. If done set status to ONLINE to indicate proper working.
         // Long running initialization should be done asynchronously in background.
         updateStatus(ThingStatus.ONLINE);
 
-        // Note: When initialization can NOT be done set the status with more details for further
-        // analysis. See also class ThingStatusDetail for all available status details.
-        // Add a description to give user information to understand why thing does not work
-        // as expected. E.g.
-        // updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
-        // "Can not access device as username and/or password are invalid");
+        // create a poller task that polls the REST interface
+        Runnable task = new Runnable() {
+
+            @Override
+            public void run() {
+                // TODO add polling code, probably in a separate method since it's gonna be pretty big
+            }
+        };
+
+        this.poller = this.scheduler.scheduleWithFixedDelay(task, 1, 20, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void dispose() {
+        this.poller.cancel(true);
+        super.dispose();
     }
 }
