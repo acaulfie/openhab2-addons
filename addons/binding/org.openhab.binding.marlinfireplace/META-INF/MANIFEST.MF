@@ -21,12 +21,11 @@ Import-Package:
  org.eclipse.smarthome.core.types,
  org.openhab.binding.marlinfireplace,
  org.openhab.binding.marlinfireplace.handler,
- org.openhab.core.compat1x.internal,
  org.openhab.core.events,
  org.openhab.core.items,
  org.openhab.core.types,
  org.openhab.io.transport.mqtt,
+ org.osgi.framework,
+ org.osgi.service.cm,
  org.slf4j
 Service-Component: OSGI-INF/*.xml
-Require-Bundle: org.eclipse.osgi.services,
- org.eclipse.osgi
