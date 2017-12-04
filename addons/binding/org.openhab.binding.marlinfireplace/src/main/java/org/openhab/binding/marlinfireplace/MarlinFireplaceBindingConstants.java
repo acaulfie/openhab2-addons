@@ -21,15 +21,18 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  *
  * @author Thomas Hentschel - Initial contribution
  */
- @NonNullByDefault
+@NonNullByDefault
 public class MarlinFireplaceBindingConstants {
 
     private static final String BINDING_ID = "marlinfireplace";
 
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "sample");
+    public static final ThingTypeUID THING_TYPE_FIREPLACE = new ThingTypeUID(BINDING_ID, "fireplace");
 
     // List of all Channel ids
-    public static final String CHANNEL_1 = "channel1";
+    public static final String TEMPERATURE = "temperature";
+    public static final String SETPOINT = "setpoint";
+    public static final String MODE = "mode";
+    public static final String STATE = "state";
 
 }

@@ -12,7 +12,7 @@
  */
 package org.openhab.binding.marlinfireplace.internal;
 
-import static org.openhab.binding.marlinfireplace.MarlinFireplaceBindingConstants.THING_TYPE_SAMPLE;
+import static org.openhab.binding.marlinfireplace.MarlinFireplaceBindingConstants.THING_TYPE_FIREPLACE;
 
 import java.util.Collections;
 import java.util.Set;
@@ -36,12 +36,10 @@ import org.osgi.service.component.annotations.Component;
 @Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.marlinfireplace")
 public class MarlinFireplaceHandlerFactory extends BaseThingHandlerFactory {
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SAMPLE);
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_FIREPLACE);
 
     @SuppressWarnings({ "null", "unused" })
-    private MqttService mqttService;
-    private String brokerName;
-    private String topic;
+    private MarlinFireplaceHandler handler;
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -52,8 +50,9 @@ public class MarlinFireplaceHandlerFactory extends BaseThingHandlerFactory {
     protected @Nullable ThingHandler createHandler(Thing thing) {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(THING_TYPE_SAMPLE)) {
-            return new MarlinFireplaceHandler(thing);
+        if (thingTypeUID.equals(THING_TYPE_FIREPLACE)) {
+            this.handler = new MarlinFireplaceHandler(thing);
+            return this.handler;
         }
 
         return null;
@@ -66,7 +65,8 @@ public class MarlinFireplaceHandlerFactory extends BaseThingHandlerFactory {
      *            to set.
      */
     public void setMqttService(MqttService mqttService) {
-        this.mqttService = mqttService;
+        this.handler.setMqttService(mqttService);
+
     }
 
     /**
@@ -76,7 +76,6 @@ public class MarlinFireplaceHandlerFactory extends BaseThingHandlerFactory {
      *            to remove.
      */
     public void unsetMqttService(MqttService mqttService) {
-        this.mqttService = null;
+        this.handler.unsetMqttService(mqttService);
     }
-
 }

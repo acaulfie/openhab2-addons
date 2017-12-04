@@ -11,8 +11,6 @@ Export-Package:
  org.openhab.binding.marlinfireplace,
  org.openhab.binding.marlinfireplace.handler
 Import-Package: 
- org.openhab.binding.marlinfireplace,
- org.openhab.binding.marlinfireplace.handler,
  org.eclipse.jdt.annotation;resolution:=optional,
  org.eclipse.smarthome.config.core,
  org.eclipse.smarthome.core.library.types,
@@ -21,6 +19,14 @@ Import-Package:
  org.eclipse.smarthome.core.thing.binding.builder,
  org.eclipse.smarthome.core.thing.type,
  org.eclipse.smarthome.core.types,
+ org.openhab.binding.marlinfireplace,
+ org.openhab.binding.marlinfireplace.handler,
+ org.openhab.core.compat1x.internal,
+ org.openhab.core.events,
+ org.openhab.core.items,
+ org.openhab.core.types,
  org.openhab.io.transport.mqtt,
  org.slf4j
 Service-Component: OSGI-INF/*.xml
+Require-Bundle: org.eclipse.osgi.services,
+ org.eclipse.osgi
