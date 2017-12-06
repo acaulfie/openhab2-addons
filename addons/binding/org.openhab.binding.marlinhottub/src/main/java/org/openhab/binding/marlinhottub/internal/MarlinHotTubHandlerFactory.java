@@ -8,8 +8,6 @@
  */
 package org.openhab.binding.marlinhottub.internal;
 
-import static org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants.THING_TYPE_SAMPLE;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -20,6 +18,7 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.openhab.binding.marlinhottub.MarlinHotTubBindingConstants;
 import org.openhab.binding.marlinhottub.handler.MarlinHotTubHandler;
 import org.osgi.service.component.annotations.Component;
 
@@ -34,7 +33,8 @@ import org.osgi.service.component.annotations.Component;
 public class MarlinHotTubHandlerFactory extends BaseThingHandlerFactory {
 
     @SuppressWarnings("null")
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections.singleton(THING_TYPE_SAMPLE);
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
+            .singleton(MarlinHotTubBindingConstants.THING_TYPE_MARLINHOTTUB);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -45,7 +45,7 @@ public class MarlinHotTubHandlerFactory extends BaseThingHandlerFactory {
     protected @Nullable ThingHandler createHandler(Thing thing) {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(THING_TYPE_SAMPLE)) {
+        if (thingTypeUID.equals(MarlinHotTubBindingConstants.THING_TYPE_MARLINHOTTUB)) {
             return new MarlinHotTubHandler(thing);
         }
 

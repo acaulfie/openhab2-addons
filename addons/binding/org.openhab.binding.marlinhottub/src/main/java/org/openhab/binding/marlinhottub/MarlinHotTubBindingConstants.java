@@ -23,9 +23,13 @@ public class MarlinHotTubBindingConstants {
     private static final String BINDING_ID = "marlinhottub";
 
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "marlinhottub");
+    public static final ThingTypeUID THING_TYPE_MARLINHOTTUB = new ThingTypeUID(BINDING_ID, "marlinhottub");
 
     // List of all Channel ids
-    public static final String CHANNEL_1 = "channel1";
+    public static final String TEMPERATURE = "temperature";
+    public static final String SETPOINT = "setpoint";
+    public static final String PUMP = "pump";
+    public static final String HEATER = "heater";
+    public static final String BLOWER = "blower";
 
 }
