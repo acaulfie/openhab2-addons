@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" configuration-pid="binding.isy" name="org.openhab.binding.isy.handler.IsyHandlerFactory">
+   <service>
+      <provide interface="org.openhab.core.thing.binding.ThingHandlerFactory"/>
+   </service>
+   <reference cardinality="1..1" field="injectedClientBuilder" interface="javax.ws.rs.client.ClientBuilder" name="injectedClientBuilder"/>
+   <implementation class="org.openhab.binding.isy.handler.IsyHandlerFactory"/>
+</scr:component>
